@@ -54,7 +54,8 @@
         "targetName": "test"
       },
       "exclude": [
-        "apps/job-board-e2e/**/*"
+        "apps/job-board-e2e/**/*",
+        "apps/job-search-e2e/**/*"
       ]
     }
   ],

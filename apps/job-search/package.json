@@ -1,5 +1,5 @@
 {
-  "name": "@karriera-test/job-board",
+  "name": "@karriera-test/job-search",
   "version": "0.0.1",
   "private": true,
   "nx": {
@@ -27,15 +27,15 @@
           "build"
         ],
         "options": {
-          "buildTarget": "@karriera-test/job-board:build",
+          "buildTarget": "@karriera-test/job-search:build",
           "runBuildTargetDependencies": false
         },
         "configurations": {
           "development": {
-            "buildTarget": "@karriera-test/job-board:build:development"
+            "buildTarget": "@karriera-test/job-search:build:development"
           },
           "production": {
-            "buildTarget": "@karriera-test/job-board:build:production"
+            "buildTarget": "@karriera-test/job-search:build:production"
           }
         }
       },
