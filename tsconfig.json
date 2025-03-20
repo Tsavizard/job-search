@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/job-board-e2e"
+    },
+    {
+      "path": "./apps/job-board"
+    }
+  ]
+}
