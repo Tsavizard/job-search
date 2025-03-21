@@ -65,7 +65,7 @@ describe('JobPostDatabase', () => {
       };
       mockConnection.execute.mockResolvedValueOnce([[mockRow], []]);
 
-      const result = await jobPostDb.findById('1');
+      const result = await jobPostDb.findById('1', 'user1');
 
       expect(result.ok).toBe(true);
       expect((result as DbQuerySuccessResult<JobPost>).data).toBeInstanceOf(
@@ -73,13 +73,14 @@ describe('JobPostDatabase', () => {
       );
       expect(mockConnection.execute).toHaveBeenCalledWith(expect.any(String), [
         '1',
+        'user1',
       ]);
     });
 
     it('should return null if job post not found', async () => {
       mockConnection.execute.mockResolvedValueOnce([[], []]);
 
-      const result = await jobPostDb.findById('1');
+      const result = await jobPostDb.findById('1', 'user1');
 
       expect(result.ok).toBe(true);
       expect((result as DbQuerySuccessResult<null>).data).toBeNull();

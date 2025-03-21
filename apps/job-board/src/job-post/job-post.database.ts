@@ -41,11 +41,14 @@ export class JobPostDatabase implements IDatabase<JobPost> {
     }
   }
 
-  async findById(id: string): Promise<DbQueryResult<JobPost | null>> {
+  async findById(
+    id: string,
+    userId: string
+  ): Promise<DbQueryResult<JobPost | null>> {
     try {
       const [rows] = await this.dbConnection.execute<FindRes[]>(
-        'SELECT id, title, description, salary/100 as salary, company FROM job_posts WHERE id = ?',
-        [id]
+        'SELECT id, title, description, salary/100 as salary, company FROM job_posts WHERE id = ? and userId = ?',
+        [id, userId]
       );
       assert(rows.length <= 1, 'JobPostDatabase: retrieved more than one');
 
@@ -80,10 +83,11 @@ export class JobPostDatabase implements IDatabase<JobPost> {
         ]
       );
 
-      assert(res.affectedRows === 1, 'JobPostDatabase: inserted more than one');
-      return { ok: !!res.affectedRows };
+      assert(res.affectedRows <= 1, 'JobPostDatabase: inserted more than one');
+
+      return { ok: !!res.affectedRows, id: res.insertId?.toString() };
     } catch (error) {
-      return { ok: false, error: (error as Error).message };
+      return { ok: false, id: '', error: (error as Error).message };
     }
   }
 
@@ -91,7 +95,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
     try {
       const salaryInCents = Math.round(jobPost.salary * 100);
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
-        'UPDATE job_posts SET title = ?, description = ?, salary = ?, employmentType = ? WHERE id = ? AND userId = ?',
+        'UPDATE job_posts SET title = ?, description = ?, salary = ?, employmentType = ? WHERE id = ? AND userId = ? RETURNING id',
         [
           jobPost.title,
           jobPost.description,
@@ -101,29 +105,39 @@ export class JobPostDatabase implements IDatabase<JobPost> {
           jobPost.userId,
         ]
       );
+
+      // TODO: remove console.log
+      console.log(res);
       assert(res.affectedRows <= 1, 'JobPostDatabase: Updated more than one');
 
       return res.affectedRows
-        ? { ok: true }
-        : { ok: false, error: 'Job post not found' };
+        ? { ok: true, id: jobPost.id as string }
+        : { ok: false, id: jobPost.id as string, error: 'Job post not found' };
     } catch (error) {
-      return { ok: false, error: (error as Error).message };
+      return {
+        ok: false,
+        id: jobPost.id as string,
+        error: (error as Error).message,
+      };
     }
   }
 
   async delete(id: string, userId: string): Promise<DbCommandResult> {
     try {
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
-        'DELETE FROM job_posts WHERE id = ? AND userId = ?',
+        'DELETE FROM job_posts WHERE id = ? AND userId = ? RETURNING id',
         [id, userId]
       );
 
+      // TODO: remove console.log
+      console.log(res);
+
       assert(res.affectedRows <= 1, 'JobPostDatabase: Deleted more than one');
       return res.affectedRows
-        ? { ok: true }
-        : { ok: false, error: 'Job post not found' };
+        ? { ok: true, id }
+        : { ok: false, id, error: 'Job post not found' };
     } catch (error) {
-      return { ok: false, error: (error as Error).message };
+      return { ok: false, id, error: (error as Error).message };
     }
   }
 }
