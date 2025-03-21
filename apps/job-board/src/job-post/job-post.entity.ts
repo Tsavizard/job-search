@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+
 type JobPostParams = {
   id?: string;
   title: string;
@@ -67,6 +69,15 @@ export class JobPost {
 
     this.isValidId(newId);
     this._id = newId.trim();
+  }
+
+  save(id: string) {
+    assert.equal(
+      this.id,
+      undefined,
+      'Attempted to call save on a saved JobPost'
+    );
+    this.id = id;
   }
 
   private isValidSalary(potentialSalary: unknown): potentialSalary is number {
