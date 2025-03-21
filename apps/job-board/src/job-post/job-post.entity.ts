@@ -1,19 +1,28 @@
+type JobPostParams = {
+  id?: string;
+  title: string;
+  description: string;
+  salary: number;
+  employmentType: TEmploymentType;
+  userId: string;
+};
+
 export class JobPost {
   title: string;
   description: string;
   private _salary!: number;
   private _employmentType!: TEmploymentType;
   private _userId!: string;
-  private _id!: string;
+  private _id?: string;
 
-  constructor(
-    id: string,
-    title: string,
-    description: string,
-    salary: number,
-    employmentType: TEmploymentType,
-    userId: string
-  ) {
+  constructor({
+    id,
+    title,
+    description,
+    salary,
+    employmentType,
+    userId,
+  }: JobPostParams) {
     this.id = id;
     this.title = title;
     this.description = description;
@@ -53,7 +62,9 @@ export class JobPost {
     return this._id;
   }
 
-  private set id(newId: string) {
+  private set id(newId: string | undefined) {
+    if (newId === undefined) return;
+
     this.isValidId(newId);
     this._id = newId.trim();
   }
@@ -95,4 +106,4 @@ const employmentTypeSet = new Set<TEmploymentType>([
   'remote',
 ]);
 
-type TEmploymentType = 'on-site' | 'hybrid' | 'remote';
+export type TEmploymentType = 'on-site' | 'hybrid' | 'remote';
