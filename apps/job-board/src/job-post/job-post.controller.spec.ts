@@ -36,13 +36,9 @@ describe('JobPostController', () => {
     userId: 'user1',
   });
 
-  class MockLogger {
-    log = jest.fn();
-    error = jest.fn();
-    warn = jest.fn();
-    debug = jest.fn();
-    verbose = jest.fn();
-  }
+  const mockLogger = {
+    error: jest.fn(),
+  } as unknown as Logger;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -51,11 +47,7 @@ describe('JobPostController', () => {
       providers: [
         {
           provide: JobPostService,
-          useFactory: () =>
-            new JobPostService(
-              mockJobPostDatabase,
-              MockLogger as unknown as typeof Logger
-            ),
+          useFactory: () => new JobPostService(mockJobPostDatabase, mockLogger),
         },
       ],
     }).compile();

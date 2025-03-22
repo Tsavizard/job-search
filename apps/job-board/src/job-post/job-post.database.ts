@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type {
   Connection,
   ResultSetHeader,
   RowDataPacket,
 } from 'mysql2/promise';
 import assert from 'node:assert';
+import { DATABASE_CONNECTION } from '../lib/Database';
 import type {
   DbCommandResult,
   DbQueryResult,
@@ -14,7 +15,9 @@ import { JobPost, type TEmploymentType } from './job-post.entity';
 
 @Injectable()
 export class JobPostDatabase implements IDatabase<JobPost> {
-  constructor(private dbConnection: Connection) {}
+  constructor(
+    @Inject(DATABASE_CONNECTION) private readonly dbConnection: Connection
+  ) {}
 
   async findAll(userId: string): Promise<DbQueryResult<JobPost[]>> {
     try {

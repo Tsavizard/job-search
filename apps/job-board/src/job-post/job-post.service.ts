@@ -1,16 +1,13 @@
-import { Injectable, type Logger } from '@nestjs/common';
-import type { JobPostDatabase } from './job-post.database';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { JobPostDatabase } from './job-post.database';
 import { JobPost, type TEmploymentType } from './job-post.entity';
 
 @Injectable()
 export class JobPostService {
-  private db: JobPostDatabase;
-  private readonly logger: Logger;
-
-  constructor(db: JobPostDatabase, LoggerClass: typeof Logger) {
-    this.db = db;
-    this.logger = new LoggerClass(JobPostService.name, { timestamp: true });
-  }
+  constructor(
+    private readonly db: JobPostDatabase,
+    @Inject(Logger) private readonly logger: Logger
+  ) {}
 
   async listJobPosts({ userId }: TFindManyJobPostsQuery): Promise<JobPost[]> {
     const res = await this.db.findAll(userId);

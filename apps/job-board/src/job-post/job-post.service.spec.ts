@@ -17,6 +17,9 @@ describe('JobPostService', () => {
     employmentType: 'remote',
     userId,
   });
+  const mockLogger = {
+    error: jest.fn(),
+  };
 
   beforeEach(async () => {
     mockDb = {
@@ -31,7 +34,8 @@ describe('JobPostService', () => {
       providers: [
         {
           provide: JobPostService,
-          useFactory: () => new JobPostService(mockDb, Logger),
+          useFactory: () =>
+            new JobPostService(mockDb, mockLogger as unknown as Logger),
         },
       ],
     }).compile();
