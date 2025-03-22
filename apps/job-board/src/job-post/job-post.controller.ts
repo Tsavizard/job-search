@@ -16,6 +16,10 @@ import { JobPost, type TEmploymentType } from './job-post.entity';
 import { JobPostSchema } from './job-post.schema';
 import { JobPostService } from './job-post.service';
 
+const validationPipeline = new ZodValidationPipe<TCreatePostParams>(
+  JobPostSchema
+);
+
 @UseGuards(AuthGuard)
 @Controller('job-posts')
 export class JobPostController {
@@ -74,10 +78,6 @@ export class JobPostController {
     if (!res) throw new Error('Job post deletion failed.');
   }
 }
-
-const validationPipeline = new ZodValidationPipe<TCreatePostParams>(
-  JobPostSchema
-);
 
 type Request = { userId: string };
 export type TCreatePostParams = {

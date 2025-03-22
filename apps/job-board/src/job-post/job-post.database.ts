@@ -52,17 +52,18 @@ export class JobPostDatabase implements IDatabase<JobPost> {
       );
       assert(rows.length <= 1, 'JobPostDatabase: retrieved more than one');
 
-      const post =
-        rows.length === 0
-          ? null
-          : new JobPost({
-              id: rows[0].id,
-              title: rows[0].title,
-              description: rows[0].description,
-              salary: rows[0].salary,
-              employmentType: rows[0].employmentType,
-              userId: rows[0].userId,
-            });
+      if (rows.length === 0) {
+        return { ok: false, error: 'Job post not found' };
+      }
+
+      const post = new JobPost({
+        id: rows[0].id,
+        title: rows[0].title,
+        description: rows[0].description,
+        salary: rows[0].salary,
+        employmentType: rows[0].employmentType,
+        userId: rows[0].userId,
+      });
       return { ok: true, data: post };
     } catch (error) {
       return { ok: false, error: (error as Error).message };
@@ -107,7 +108,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
       );
 
       // TODO: remove console.log
-      console.log(res);
+      // console.log(res);
       assert(res.affectedRows <= 1, 'JobPostDatabase: Updated more than one');
 
       return res.affectedRows
@@ -130,7 +131,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
       );
 
       // TODO: remove console.log
-      console.log(res);
+      // console.log(res);
 
       assert(res.affectedRows <= 1, 'JobPostDatabase: Deleted more than one');
       return res.affectedRows

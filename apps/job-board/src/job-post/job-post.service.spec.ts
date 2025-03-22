@@ -25,7 +25,7 @@ describe('JobPostService', () => {
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-    };
+    } as unknown as jest.Mocked<JobPostDatabase>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -124,7 +124,8 @@ describe('JobPostService', () => {
           employmentType: 'hybrid',
         },
       });
-      expect(result.title).toBe('Updated Job');
+      expect(result).toBeInstanceOf(JobPost);
+      expect(result?.title).toBe('Updated Job');
     });
   });
 

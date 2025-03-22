@@ -3,7 +3,10 @@ import {
   ResultSetHeader,
   type RowDataPacket,
 } from 'mysql2/promise';
-import type { DbQuerySuccessResult } from '../types/database';
+import type {
+  DbQueryErrorResult,
+  DbQuerySuccessResult,
+} from '../types/database';
 import { JobPostDatabase } from './job-post.database';
 import { JobPost } from './job-post.entity';
 
@@ -77,13 +80,14 @@ describe('JobPostDatabase', () => {
       ]);
     });
 
-    it('should return null if job post not found', async () => {
+    it('should return ok false if job post not found', async () => {
       mockConnection.execute.mockResolvedValueOnce([[], []]);
 
       const result = await jobPostDb.findById('1', 'user1');
 
-      expect(result.ok).toBe(true);
-      expect((result as DbQuerySuccessResult<null>).data).toBeNull();
+      expect(result.ok).toBe(false);
+      expect((result as DbQuerySuccessResult<null>).data).toBeUndefined();
+      expect(typeof (result as DbQueryErrorResult).error).toBe('string');
     });
   });
 
