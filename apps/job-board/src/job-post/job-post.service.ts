@@ -57,17 +57,18 @@ export class JobPostService {
     id: string;
     userId: string;
     jobPostParams: TJobPostParams;
-  }): Promise<JobPost> {
+  }): Promise<JobPost | null> {
     const jobPost = new JobPost({ ...jobPostParams, id, userId });
     const res = await this.db.update(jobPost);
-    if (!res.ok)
-      this.logger.error({
-        error: res.error,
-        userId: jobPost.userId,
-        jobPostId: jobPost.id,
-      });
+    if (res.ok) return jobPost;
 
-    return jobPost;
+    this.logger.error({
+      error: res.error,
+      userId: jobPost.userId,
+      jobPostId: jobPost.id,
+    });
+
+    return null;
   }
 
   async deleteJobPost({ id, userId }: TFindOneJobPostQuery): Promise<boolean> {

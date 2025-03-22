@@ -1,14 +1,5 @@
 import assert from 'node:assert';
 
-type JobPostParams = {
-  id?: string;
-  title: string;
-  description: string;
-  salary: number;
-  employmentType: TEmploymentType;
-  userId: string;
-};
-
 export class JobPost {
   title: string;
   description: string;
@@ -118,3 +109,12 @@ const employmentTypeSet = new Set<TEmploymentType>([
 ]);
 
 export type TEmploymentType = 'on-site' | 'hybrid' | 'remote';
+
+type JobPostParams = {
+  id?: string;
+  title: string;
+  description: string;
+  salary: number;
+  employmentType: TEmploymentType;
+  userId: string;
+};
