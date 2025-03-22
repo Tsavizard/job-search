@@ -31,12 +31,19 @@ async function bootstrap() {
     .setTitle('Job Board API')
     .setDescription('The job board API description')
     .setVersion('1.0')
-    .addTag('job-board')
-    .addBearerAuth()
+    .addCookieAuth('authCookie', {
+      type: 'apiKey',
+      in: 'cookie',
+      name: 'token', // Change this to match your actual cookie name
+    })
     .build();
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/swagger', app, documentFactory);
+  const documentFactory = () =>
+    SwaggerModule.createDocument(app, config, { deepScanRoutes: true });
+
+  SwaggerModule.setup('api/swagger', app, documentFactory, {
+    jsonDocumentUrl: 'swagger/json',
+  });
 
   await app.register(fastifyCookie);
   await app.register(fastifyStatic, {

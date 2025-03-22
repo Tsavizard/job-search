@@ -10,27 +10,39 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../lib/AuthGuard';
 import { ZodValidationPipe } from '../lib/ZodValidationPipe';
 import { JobPost, type TEmploymentType } from './job-post.entity';
 import { JobPostSchema } from './job-post.schema';
 import { JobPostService } from './job-post.service';
+import {
+  deleteSwagger,
+  indexSwagger,
+  postSwaggerBody,
+  putSwaggerBody,
+  showSwagger,
+} from './job-post.swagger';
 
 const validationPipeline = new ZodValidationPipe<TCreatePostParams>(
   JobPostSchema
 );
 
+@ApiTags('Job Posts')
 @UseGuards(AuthGuard)
 @Controller('job-posts')
 export class JobPostController {
   constructor(private readonly jobPostService: JobPostService) {}
 
   @Get()
+  @ApiOperation(indexSwagger)
   async findAll(@Req() { userId }: Request): Promise<JobPost[]> {
     return await this.jobPostService.listJobPosts({ userId: userId });
   }
 
   @Get(':id')
+  @ApiOperation(showSwagger)
   async findOne(
     @Param('id') id: string,
     @Req() { userId }: Request
@@ -41,6 +53,7 @@ export class JobPostController {
   }
 
   @Post()
+  @ApiOperation(postSwaggerBody)
   async create(
     @Req() { userId }: Request,
     @Body(validationPipeline) body: TCreatePostParams
@@ -54,6 +67,7 @@ export class JobPostController {
   }
 
   @Put(':id')
+  @ApiOperation(putSwaggerBody)
   async update(
     @Param('id') id: string,
     @Req() { userId }: Request,
@@ -70,6 +84,7 @@ export class JobPostController {
 
   @Delete(':id')
   @HttpCode(204)
+  @ApiOperation(deleteSwagger)
   async remove(
     @Param('id') id: string,
     @Req() { userId }: Request
