@@ -1,7 +1,7 @@
 import type { ApiOperationOptions } from '@nestjs/swagger';
 
 const swaggerCookieAuth = {
-  name: 'token',
+  name: 'authToken',
   in: 'cookie' as const,
   required: true,
   description: 'Authentication token',
@@ -36,10 +36,17 @@ const errorBody = {
   },
 };
 
+const forbiddenResponse = {
+  403: {
+    description: 'Forbidden',
+    ...errorBody,
+  },
+};
+
 export const indexSwagger: ApiOperationOptions = {
   summary: 'Retrieve all job posts for user',
   parameters: [swaggerCookieAuth],
-  security: [{ authCookie: [] }],
+  security: [{ authToken: [] }],
   responses: {
     200: {
       description: 'Job posts found',
@@ -52,6 +59,7 @@ export const indexSwagger: ApiOperationOptions = {
         },
       },
     },
+    ...forbiddenResponse,
   },
 };
 
@@ -61,7 +69,7 @@ export const showSwagger: ApiOperationOptions = {
     { name: 'id', in: 'path' as const, required: true },
     swaggerCookieAuth,
   ],
-  security: [{ authCookie: [] }],
+  security: [{ authToken: [] }],
   responses: {
     200: {
       description: 'Job post found',
@@ -73,13 +81,14 @@ export const showSwagger: ApiOperationOptions = {
       description: 'Job post not found',
       ...errorBody,
     },
+    ...forbiddenResponse,
   },
 };
 
 export const postSwaggerBody: ApiOperationOptions = {
   summary: 'Create job post by id and userId',
   parameters: [swaggerCookieAuth],
-  security: [{ authCookie: [] }],
+  security: [{ authToken: [] }],
   requestBody: {
     content: {
       'application/json': {
@@ -107,6 +116,7 @@ export const postSwaggerBody: ApiOperationOptions = {
       description: 'Bad request',
       ...errorBody,
     },
+    ...forbiddenResponse,
   },
 };
 
@@ -116,7 +126,7 @@ export const putSwaggerBody: ApiOperationOptions = {
     { name: 'id', in: 'path' as const, required: true },
     swaggerCookieAuth,
   ],
-  security: [{ authCookie: [] }],
+  security: [{ authToken: [] }],
   requestBody: {
     content: {
       'application/json': {
@@ -144,6 +154,7 @@ export const putSwaggerBody: ApiOperationOptions = {
       description: 'Bad request',
       ...errorBody,
     },
+    ...forbiddenResponse,
   },
 };
 
@@ -153,7 +164,7 @@ export const deleteSwagger: ApiOperationOptions = {
     { name: 'id', in: 'path' as const, required: true },
     swaggerCookieAuth,
   ],
-  security: [{ authCookie: [] }],
+  security: [{ authToken: [] }],
   responses: {
     204: {
       description: 'Job post deleted',
@@ -162,5 +173,6 @@ export const deleteSwagger: ApiOperationOptions = {
       description: 'Bad request',
       ...errorBody,
     },
+    ...forbiddenResponse,
   },
 };

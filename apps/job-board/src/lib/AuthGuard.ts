@@ -10,7 +10,7 @@ export class AuthGuard implements CanActivate {
 
     // TODO: Implement authenticator to decrypt 'token' and verify the user
     // Read userId from the cookies
-    const userId = request.cookies['token']; // Cookie named 'userId'
+    const userId = request.cookies['authToken']; // Cookie named 'userId'
 
     if (!userId) {
       return false;

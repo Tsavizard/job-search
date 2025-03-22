@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../lib/AuthGuard';
 import { ZodValidationPipe } from '../lib/ZodValidationPipe';
 import { JobPost, type TEmploymentType } from './job-post.entity';
@@ -31,6 +31,7 @@ const validationPipeline = new ZodValidationPipe<TCreatePostParams>(
 
 @ApiTags('Job Posts')
 @UseGuards(AuthGuard)
+@ApiCookieAuth()
 @Controller('job-posts')
 export class JobPostController {
   constructor(private readonly jobPostService: JobPostService) {}

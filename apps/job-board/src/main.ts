@@ -31,10 +31,10 @@ async function bootstrap() {
     .setTitle('Job Board API')
     .setDescription('The job board API description')
     .setVersion('1.0')
-    .addCookieAuth('authCookie', {
+    .addCookieAuth('authToken', {
       type: 'apiKey',
       in: 'cookie',
-      name: 'token', // Change this to match your actual cookie name
+      name: 'authToken',
     })
     .build();
 
@@ -45,7 +45,10 @@ async function bootstrap() {
     jsonDocumentUrl: 'swagger/json',
   });
 
-  await app.register(fastifyCookie);
+  await app.register(
+    fastifyCookie,
+    { secret: 'fooBar' } // Add a secret key for signed cookies
+  );
   await app.register(fastifyStatic, {
     root: join(__dirname, '..', 'public'),
     prefix: '/public/',
