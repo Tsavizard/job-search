@@ -1,8 +1,8 @@
 export interface IDatabase<T> {
   findAll(userId: string): Promise<DbQueryResult<T[]>>;
-  findById(id: string): Promise<DbQueryResult<T | null>>;
+  findById(id: string, userId: string): Promise<DbQueryResult<T | null>>;
   create(entity: T): Promise<DbCommandResult>;
-  update(entity: T, entity: T): Promise<DbCommandResult>;
+  update(entity: T): Promise<DbCommandResult>;
   delete(id: string, userId: string): Promise<DbCommandResult>;
 }
 
@@ -17,4 +17,4 @@ export type DbQueryErrorResult = {
 };
 
 export type DbQueryResult<T> = DbQuerySuccessResult<T> | DbQueryErrorResult;
-export type DbCommandResult = { ok: boolean; error?: string };
+export type DbCommandResult = { ok: boolean; id: string; error?: string };

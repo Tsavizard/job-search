@@ -233,11 +233,11 @@ describe('JobPost', () => {
   describe('#save', () => {
     it('should set id when saving unsaved post', () => {
       const jobPost = new JobPost({
-      title: 'Developer',
-      description: 'Description',
-      salary: 50000,
-      employmentType: 'remote',
-      userId: '123',
+        title: 'Developer',
+        description: 'Description',
+        salary: 50000,
+        employmentType: 'remote',
+        userId: '123',
       });
       jobPost.save('new_id');
       expect(jobPost.id).toBe('new_id');
@@ -245,49 +245,61 @@ describe('JobPost', () => {
 
     it('should throw error when saving already saved post', () => {
       const jobPost = new JobPost({
-      id: 'existing_id',
-      title: 'Developer',
-      description: 'Description',
-      salary: 50000,
-      employmentType: 'remote',
-      userId: '123',
+        id: 'existing_id',
+        title: 'Developer',
+        description: 'Description',
+        salary: 50000,
+        employmentType: 'remote',
+        userId: '123',
       });
-      expect(() => jobPost.save('new_id')).toThrow('Attempted to call save on a saved JobPost');
+      expect(() => jobPost.save('new_id')).toThrow(
+        'Attempted to call save on a saved JobPost'
+      );
     });
 
     it('should throw error when saving with invalid id', () => {
       const jobPost = new JobPost({
-      title: 'Developer',
-      description: 'Description',
-      salary: 50000,
-      employmentType: 'remote',
-      userId: '123',
+        title: 'Developer',
+        description: 'Description',
+        salary: 50000,
+        employmentType: 'remote',
+        userId: '123',
       });
       expect(() => jobPost.save('')).toThrow('Id cannot be empty');
     });
 
     it('should throw error when saving with non-string id', () => {
       const jobPost = new JobPost({
-      title: 'Developer',
-      description: 'Description',
-      salary: 50000,
-      employmentType: 'remote',
-      userId: '123',
+        title: 'Developer',
+        description: 'Description',
+        salary: 50000,
+        employmentType: 'remote',
+        userId: '123',
       });
       expect(() => {
-      // @ts-expect-error: Testing invalid type
-      jobPost.save(123)
+        // @ts-expect-error: Testing invalid type
+        jobPost.save(123);
       }).toThrow('Id must be a string');
 
       expect(() => {
-      // @ts-expect-error: Testing invalid type
-      jobPost.save(null)
-      }).toThrow('Id must be a string');
-
-      expect(() => {
-      // @ts-expect-error: Testing invalid type
-      jobPost.save(undefined)
+        // @ts-expect-error: Testing invalid type
+        jobPost.save(null);
       }).toThrow('Id must be a string');
     });
-  })
+
+    it('should ignore passing undefined as saved id', () => {
+      const jobPost = new JobPost({
+        title: 'Developer',
+        description: 'Description',
+        salary: 50000,
+        employmentType: 'remote',
+        userId: '123',
+      });
+
+      expect(() => {
+        // @ts-expect-error: Testing invalid type
+        jobPost.save(undefined);
+      }).not.toThrow();
+    });
+  });
 });
