@@ -1,22 +1,24 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Connection, createConnection } from 'mysql2/promise';
 class Database implements IDatabase {
   connection!: Connection;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.connect = this.connect.bind(this);
     this.disconnect = this.disconnect.bind(this);
   }
 
   async connect() {
-    if (this.connection) return;
-
-    this.connection = await createConnection({
-      host: process.env.MYSQL_HOST,
-      user: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
-      port: parseInt(process.env.MYSQL_PORT as string),
+    this.connection ||= await createConnection({
+      host: this.configService.get('MYSQL_HOST'),
+      user: this.configService.get('MYSQL_USER'),
+      password: this.configService.get('MYSQL_PASSWORD'),
+      database: this.configService.get('MYSQL_DATABASE'),
+      port: this.configService.get('MYSQL_PORT'),
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
     });
   }
 
@@ -25,7 +27,6 @@ class Database implements IDatabase {
     return this.connection.end();
   }
 }
-const db = new Database();
 
 export type DBConnection = Connection;
 type IDatabase = {
@@ -37,13 +38,16 @@ type IDatabase = {
 export const DATABASE_CONNECTION = 'DATABASE_CONNECTION';
 
 @Module({
+  imports: [ConfigModule],
   providers: [
     {
       provide: DATABASE_CONNECTION,
-      useFactory: async (): Promise<Connection> => {
+      useFactory: async (configService: ConfigService): Promise<Connection> => {
+        const db = new Database(configService);
         await db.connect();
         return db.connection;
       },
+      inject: [ConfigService],
     },
   ],
   exports: [DATABASE_CONNECTION],

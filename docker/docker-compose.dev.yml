@@ -1,16 +1,10 @@
-version: '3.8'
-
 services:
-  db:
+  mysql-dev:
     image: mysql:8.0
     container_name: karriera-job-board-db
     restart: always
-    environment:
-      MYSQL_HOST: localhost
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: job-board
-      MYSQL_USER: karriera
-      MYSQL_PASSWORD: karriera
+    env_file:
+      - ../envs/.env.dev
     ports:
       - '${MYSQL_PORT:-3306}:3306' # Use default 3306 if MYSQL_PORT is not set
     volumes:

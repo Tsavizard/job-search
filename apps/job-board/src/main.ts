@@ -4,6 +4,7 @@
  */
 
 import fastifyCookie from '@fastify/cookie';
+import fastifyStatic from '@fastify/static';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
@@ -11,6 +12,7 @@ import {
   type NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
@@ -34,9 +36,13 @@ async function bootstrap() {
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('api/swagger', app, documentFactory);
 
-  app.register(fastifyCookie);
+  await app.register(fastifyCookie);
+  await app.register(fastifyStatic, {
+    root: join(__dirname, '..', 'public'),
+    prefix: '/public/',
+  });
 
   await app.listen(port);
   Logger.log(
