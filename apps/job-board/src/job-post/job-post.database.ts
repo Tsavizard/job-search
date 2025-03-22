@@ -22,11 +22,11 @@ export class JobPostDatabase implements IDatabase<JobPost> {
   async findAll(userId: string): Promise<DbQueryResult<JobPost[]>> {
     try {
       const QUERY =
-        'SELECT id, title, description, salary/100 as salary, company FROM job_posts WHERE userId = ?';
+        'SELECT id, title, description, salary as salary, employmentType, userId FROM job_posts WHERE userId = ?';
       const [rows] = await this.dbConnection.execute<FindRes[]>(QUERY, [
         userId,
       ]);
-
+      console.log(rows);
       const posts = rows.map(
         (r) =>
           new JobPost({
@@ -50,7 +50,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
   ): Promise<DbQueryResult<JobPost | null>> {
     try {
       const [rows] = await this.dbConnection.execute<FindRes[]>(
-        'SELECT id, title, description, salary/100 as salary, company FROM job_posts WHERE id = ? and userId = ?',
+        'SELECT id, title, description, salary/100 as salary, employmentType, userId FROM job_posts WHERE id = ? and userId = ?',
         [id, userId]
       );
       assert(rows.length <= 1, 'JobPostDatabase: retrieved more than one');
