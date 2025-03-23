@@ -1,15 +1,5 @@
 import type { ApiOperationOptions } from '@nestjs/swagger';
 
-const swaggerCookieAuth = {
-  name: 'authToken',
-  in: 'cookie' as const,
-  required: true,
-  description: 'Authentication token',
-  schema: {
-    type: 'string',
-  },
-};
-
 const jobPostSchema = {
   type: 'object',
   properties: {
@@ -45,8 +35,7 @@ const forbiddenResponse = {
 
 export const indexSwagger: ApiOperationOptions = {
   summary: 'Retrieve all job posts for user',
-  parameters: [swaggerCookieAuth],
-  security: [{ authToken: [] }],
+  parameters: [],
   responses: {
     200: {
       description: 'Job posts found',
@@ -65,11 +54,7 @@ export const indexSwagger: ApiOperationOptions = {
 
 export const showSwagger: ApiOperationOptions = {
   summary: 'Retrieve job post by id and userId',
-  parameters: [
-    { name: 'id', in: 'path' as const, required: true },
-    swaggerCookieAuth,
-  ],
-  security: [{ authToken: [] }],
+  parameters: [{ name: 'id', in: 'path' as const, required: true }],
   responses: {
     200: {
       description: 'Job post found',
@@ -87,8 +72,6 @@ export const showSwagger: ApiOperationOptions = {
 
 export const postSwaggerBody: ApiOperationOptions = {
   summary: 'Create job post by id and userId',
-  parameters: [swaggerCookieAuth],
-  security: [{ authToken: [] }],
   requestBody: {
     content: {
       'application/json': {
@@ -122,11 +105,7 @@ export const postSwaggerBody: ApiOperationOptions = {
 
 export const putSwaggerBody: ApiOperationOptions = {
   summary: 'Update job post by id and userId',
-  parameters: [
-    { name: 'id', in: 'path' as const, required: true },
-    swaggerCookieAuth,
-  ],
-  security: [{ authToken: [] }],
+  parameters: [{ name: 'id', in: 'path' as const, required: true }],
   requestBody: {
     content: {
       'application/json': {
@@ -160,11 +139,7 @@ export const putSwaggerBody: ApiOperationOptions = {
 
 export const deleteSwagger: ApiOperationOptions = {
   summary: 'Delete job post by id and userId',
-  parameters: [
-    { name: 'id', in: 'path' as const, required: true },
-    swaggerCookieAuth,
-  ],
-  security: [{ authToken: [] }],
+  parameters: [{ name: 'id', in: 'path' as const, required: true }],
   responses: {
     204: {
       description: 'Job post deleted',

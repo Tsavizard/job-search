@@ -30,11 +30,11 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Job Board API')
     .setDescription('The job board API description')
-    .setVersion('1.0')
-    .addCookieAuth('authToken', {
-      type: 'apiKey',
-      in: 'cookie',
-      name: 'authToken',
+    .setVersion('1.0.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'string',
     })
     .build();
 
@@ -42,7 +42,7 @@ async function bootstrap() {
     SwaggerModule.createDocument(app, config, { deepScanRoutes: true });
 
   SwaggerModule.setup('api/swagger', app, documentFactory, {
-    jsonDocumentUrl: 'swagger/json',
+    jsonDocumentUrl: 'api/swagger-json',
   });
 
   await app.register(
