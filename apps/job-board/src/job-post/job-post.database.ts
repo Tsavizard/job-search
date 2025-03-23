@@ -99,7 +99,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
     try {
       const salaryInCents = Math.trunc(jobPost.salary * 100);
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
-        'UPDATE job_posts SET title = ?, description = ?, salary = ?, work_model = ? WHERE id = ? AND userId = ? RETURNING id',
+        'UPDATE job_posts SET title = ?, description = ?, salary = ?, work_model = ? WHERE id = ? AND userId = ?',
         [
           jobPost.title,
           jobPost.description,
@@ -110,8 +110,6 @@ export class JobPostDatabase implements IDatabase<JobPost> {
         ]
       );
 
-      // TODO: remove console.log
-      // console.log(res);
       assert(res.affectedRows <= 1, 'JobPostDatabase: Updated more than one');
 
       return res.affectedRows
@@ -129,12 +127,9 @@ export class JobPostDatabase implements IDatabase<JobPost> {
   async delete(id: string, userId: string): Promise<DbCommandResult> {
     try {
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
-        'DELETE FROM job_posts WHERE id = ? AND userId = ? RETURNING id',
+        'DELETE FROM job_posts WHERE id = ? AND userId = ?',
         [id, userId]
       );
-
-      // TODO: remove console.log
-      // console.log(res);
 
       assert(res.affectedRows <= 1, 'JobPostDatabase: Deleted more than one');
       return res.affectedRows
