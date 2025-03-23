@@ -1,1 +1,0 @@
-docker exec -it karriera_mysql mysql -ukarriera -pkarriera karriera
