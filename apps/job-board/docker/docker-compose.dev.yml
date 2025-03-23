@@ -4,7 +4,7 @@ services:
     container_name: karriera-job-board-db-dev
     restart: always
     env_file:
-      - ./envs/.env.development
+      - ../envs/.env.development
     ports:
       - '${MYSQL_PORT:-3306}:3306'
     volumes:
@@ -18,7 +18,7 @@ services:
     container_name: karriera-job-board-dev
     restart: always
     env_file:
-      - ./envs/.env.development
+      - ../envs/.env.development
     ports:
       - '${PORT:-3000}:3000'
     volumes:
