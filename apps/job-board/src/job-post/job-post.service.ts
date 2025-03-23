@@ -1,4 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { JobPostEventsService } from '../lib/kafka/job-post-events.service';
 import { JobPostDatabase } from './job-post.database';
 import { JobPostDto } from './job-post.dto';
 import { JobPost, type TWorkModel } from './job-post.entity';
@@ -7,7 +8,8 @@ import { JobPost, type TWorkModel } from './job-post.entity';
 export class JobPostService {
   constructor(
     private readonly db: JobPostDatabase,
-    @Inject(Logger) private readonly logger: Logger
+    @Inject(Logger) private readonly logger: Logger,
+    private readonly eventsService: JobPostEventsService
   ) {}
 
   async listJobPosts({
@@ -42,7 +44,9 @@ export class JobPostService {
     const res = await this.db.create(jobPost);
     if (res.ok) {
       jobPost.save(res.id);
-      return JobPostDto.from(jobPost);
+      const dto = JobPostDto.from(jobPost);
+      await this.eventsService.emitCreated(dto);
+      return dto;
     }
 
     this.logger.error({ error: res.error, userId: jobPost.userId });
@@ -60,7 +64,11 @@ export class JobPostService {
   }): Promise<JobPostDto | null> {
     const jobPost = new JobPost({ ...jobPostParams, id, userId });
     const res = await this.db.update(jobPost);
-    if (res.ok) return JobPostDto.from(jobPost);
+    if (res.ok) {
+      const dto = JobPostDto.from(jobPost);
+      await this.eventsService.emitUpdated(dto);
+      return dto;
+    }
 
     this.logger.error({
       error: res.error,
@@ -73,6 +81,9 @@ export class JobPostService {
 
   async deleteJobPost({ id, userId }: TFindOneJobPostQuery): Promise<boolean> {
     const res = await this.db.delete(id, userId);
+    if (res.ok) {
+      await this.eventsService.emitDeleted(id);
+    }
     if (!res.ok) this.logger.error({ error: res.error, userId, jobPostId: id });
 
     return res.ok;

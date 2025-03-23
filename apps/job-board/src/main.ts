@@ -7,6 +7,7 @@ import fastifyCookie from '@fastify/cookie';
 import fastifyStatic from '@fastify/static';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { Transport, type MicroserviceOptions } from '@nestjs/microservices';
 import {
   FastifyAdapter,
   type NestFastifyApplication,
@@ -23,9 +24,30 @@ async function bootstrap() {
       logger: new Logger('JobBoard', { timestamp: true }),
     }
   );
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
+
+  const server = app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: 'job-board',
+        brokers: ['localhost:9092'],
+        retry: {
+          initialRetryTime: 100,
+          retries: 8,
+          maxRetryTime: 30000,
+        },
+      },
+      consumer: {
+        groupId: 'job-board-consumer',
+      },
+      subscribe: {
+        fromBeginning: true,
+      },
+    },
+  });
+  server.status.subscribe((status: string) => {
+    Logger.debug(status);
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Job Board API')
@@ -54,6 +76,10 @@ async function bootstrap() {
     prefix: '/public/',
   });
 
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix);
+  const port = process.env.PORT || 3000;
+  await app.startAllMicroservices();
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
