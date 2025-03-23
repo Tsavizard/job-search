@@ -5,6 +5,7 @@ import type {
   RowDataPacket,
 } from 'mysql2/promise';
 import assert from 'node:assert';
+import { v4 as uuid } from 'uuid';
 import { DATABASE_CONNECTION } from '../lib/Database';
 import type {
   DbCommandResult,
@@ -44,10 +45,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
     }
   }
 
-  async findById(
-    id: string,
-    userId: string
-  ): Promise<DbQueryResult<JobPost | null>> {
+  async findById(id: string, userId: string): Promise<DbQueryResult<JobPost>> {
     try {
       const [rows] = await this.dbConnection.execute<FindRes[]>(
         'SELECT id, title, description, salary as salary, work_model, userId FROM job_posts WHERE id = ? and userId = ?',
@@ -75,10 +73,12 @@ export class JobPostDatabase implements IDatabase<JobPost> {
 
   async create(jobPost: JobPost): Promise<DbCommandResult> {
     try {
+      const id = uuid();
       const salaryInCents = Math.trunc(jobPost.salary * 100);
-      const [res] = await this.dbConnection.execute<ResultSetHeader>(
-        'INSERT INTO job_posts (title, description, salary, work_model, userId) VALUES (?, ?, ?, ?, ?)',
+      const result = await this.dbConnection.execute<ResultSetHeader>(
+        'INSERT INTO job_posts (id, title, description, salary, work_model, userId) VALUES (?, ?, ?, ?, ?, ?)',
         [
+          id,
           jobPost.title,
           jobPost.description,
           salaryInCents,
@@ -86,10 +86,10 @@ export class JobPostDatabase implements IDatabase<JobPost> {
           jobPost.userId,
         ]
       );
-
+      const [res] = result;
       assert(res.affectedRows <= 1, 'JobPostDatabase: inserted more than one');
 
-      return { ok: !!res.affectedRows, id: res.insertId?.toString() };
+      return { ok: !!res.affectedRows, id };
     } catch (error) {
       return { ok: false, id: '', error: (error as Error).message };
     }

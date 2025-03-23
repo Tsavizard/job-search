@@ -86,7 +86,7 @@ describe('JobPostDatabase', () => {
       const result = await jobPostDb.findById('1', 'user1');
 
       expect(result.ok).toBe(false);
-      expect((result as DbQuerySuccessResult<null>).data).toBeUndefined();
+      expect((result as DbQuerySuccessResult<JobPost>).data).toBeUndefined();
       expect(typeof (result as DbQueryErrorResult).error).toBe('string');
     });
   });
@@ -109,6 +109,7 @@ describe('JobPostDatabase', () => {
 
       expect(result.ok).toBe(true);
       expect(mockConnection.execute).toHaveBeenCalledWith(expect.any(String), [
+        expect.any(String),
         jobPost.title,
         jobPost.description,
         100000,

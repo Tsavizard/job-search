@@ -1,6 +1,6 @@
 export interface IDatabase<T> {
   findAll(userId: string): Promise<DbQueryResult<T[]>>;
-  findById(id: string, userId: string): Promise<DbQueryResult<T | null>>;
+  findById(id: string, userId: string): Promise<DbQueryResult<T>>;
   create(entity: T): Promise<DbCommandResult>;
   update(entity: T): Promise<DbCommandResult>;
   delete(id: string, userId: string): Promise<DbCommandResult>;

@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JobPostDatabase } from './job-post.database';
+import { JobPostDto } from './job-post.dto';
 import { JobPost, type TWorkModel } from './job-post.entity';
 
 @Injectable()
@@ -9,9 +10,11 @@ export class JobPostService {
     @Inject(Logger) private readonly logger: Logger
   ) {}
 
-  async listJobPosts({ userId }: TFindManyJobPostsQuery): Promise<JobPost[]> {
+  async listJobPosts({
+    userId,
+  }: TFindManyJobPostsQuery): Promise<JobPostDto[]> {
     const res = await this.db.findAll(userId);
-    if (res.ok) return res.data;
+    if (res.ok) return res.data.map((post) => JobPostDto.from(post));
 
     this.logger.error({ error: res.error, userId });
     return [];
@@ -20,9 +23,9 @@ export class JobPostService {
   async getJobPost({
     id,
     userId,
-  }: TFindOneJobPostQuery): Promise<JobPost | null> {
+  }: TFindOneJobPostQuery): Promise<JobPostDto | null> {
     const res = await this.db.findById(id, userId);
-    if (res.ok) return res.data;
+    if (res.ok) return JobPostDto.from(res.data);
 
     this.logger.error({ error: res.error, userId, jobPostId: id });
     return null;
@@ -34,16 +37,16 @@ export class JobPostService {
   }: {
     userId: string;
     jobPostParams: TJobPostParams;
-  }): Promise<JobPost> {
+  }): Promise<JobPostDto | null> {
     const jobPost = new JobPost({ ...jobPostParams, userId });
     const res = await this.db.create(jobPost);
     if (res.ok) {
       jobPost.save(res.id);
-    } else {
-      this.logger.error({ error: res.error, userId: jobPost.userId });
+      return JobPostDto.from(jobPost);
     }
 
-    return jobPost;
+    this.logger.error({ error: res.error, userId: jobPost.userId });
+    return null;
   }
 
   async updateJobPost({
@@ -54,10 +57,10 @@ export class JobPostService {
     id: string;
     userId: string;
     jobPostParams: TJobPostParams;
-  }): Promise<JobPost | null> {
+  }): Promise<JobPostDto | null> {
     const jobPost = new JobPost({ ...jobPostParams, id, userId });
     const res = await this.db.update(jobPost);
-    if (res.ok) return jobPost;
+    if (res.ok) return JobPostDto.from(jobPost);
 
     this.logger.error({
       error: res.error,

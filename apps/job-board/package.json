@@ -51,5 +51,8 @@
         "command": "docker build -f apps/job-board/Dockerfile . -t job-board"
       }
     }
+  },
+  "devDependencies": {
+    "@types/uuid": "^10.0.0"
   }
 }

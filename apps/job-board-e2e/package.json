@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "nx": {
-    "name": "job-board-e2e",
     "implicitDependencies": [
-      "job-board"
+      "@karriera-test/job-board"
     ],
     "targets": {
       "e2e": {
@@ -18,7 +17,7 @@
           "passWithNoTests": true
         },
         "dependsOn": [
-          "job-board:build"
+          "@karriera-test/job-board:serve:development"
         ]
       }
     }

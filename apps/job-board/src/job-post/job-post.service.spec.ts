@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { JobPostDatabase } from './job-post.database';
+import { JobPostDto } from './job-post.dto';
 import { JobPost } from './job-post.entity';
 import { JobPostService } from './job-post.service';
 
@@ -11,12 +12,14 @@ describe('JobPostService', () => {
   const userId = 'test-user-id';
   const jobPostId = 'test-post-id';
   const mockJobPost = new JobPost({
+    id: jobPostId,
     title: 'Test Job',
     description: 'Test Description',
     salary: 50000,
     workModel: 'remote',
     userId,
   });
+  const mockJobPostDto = JobPostDto.from(mockJobPost);
   const mockLogger = {
     error: jest.fn(),
   };
@@ -51,7 +54,7 @@ describe('JobPostService', () => {
     it('should return array of job posts on success', async () => {
       mockDb.findAll.mockResolvedValue({ ok: true, data: [mockJobPost] });
       const result = await service.listJobPosts({ userId });
-      expect(result).toEqual([mockJobPost]);
+      expect(result).toEqual([mockJobPostDto]);
     });
 
     it('should return empty array on error', async () => {
@@ -68,7 +71,7 @@ describe('JobPostService', () => {
     it('should return job post on success', async () => {
       mockDb.findById.mockResolvedValue({ ok: true, data: mockJobPost });
       const result = await service.getJobPost({ id: jobPostId, userId });
-      expect(result).toEqual(mockJobPost);
+      expect(result).toEqual(mockJobPostDto);
     });
 
     it('should return null on error', async () => {
@@ -93,7 +96,7 @@ describe('JobPostService', () => {
           workModel: 'remote',
         },
       });
-      expect(result.id).toBe(jobPostId);
+      expect(result?.id).toBe(jobPostId);
     });
 
     it('should return job post without id on error', async () => {
@@ -111,7 +114,7 @@ describe('JobPostService', () => {
           workModel: 'remote',
         },
       });
-      expect(result.id).toBeUndefined();
+      expect(result?.id).toBeUndefined();
     });
   });
 
@@ -128,7 +131,7 @@ describe('JobPostService', () => {
           workModel: 'hybrid',
         },
       });
-      expect(result).toBeInstanceOf(JobPost);
+      expect(result).toBeInstanceOf(JobPostDto);
       expect(result?.title).toBe('Updated Job');
     });
   });

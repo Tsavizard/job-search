@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpCode,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -14,7 +16,8 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuardJWT } from '../lib/AuthGuard.jwt';
 import { ZodValidationPipe } from '../lib/ZodValidationPipe';
-import { JobPost, type TWorkModel } from './job-post.entity';
+import type { JobPostDto } from './job-post.dto';
+import { type TWorkModel } from './job-post.entity';
 import { JobPostSchema } from './job-post.schema';
 import { JobPostService } from './job-post.service';
 import {
@@ -31,25 +34,25 @@ const validationPipeline = new ZodValidationPipe<TCreatePostParams>(
 
 @ApiTags('Job Posts')
 @ApiBearerAuth()
-@Controller('/api/job-posts')
+@Controller('/job-posts')
 @UseGuards(AuthGuardJWT)
 export class JobPostController {
   constructor(private readonly jobPostService: JobPostService) {}
 
   @Get()
   @ApiOperation(indexSwagger)
-  async findAll(@Req() { userId }: Request): Promise<JobPost[]> {
+  async index(@Req() { userId }: Request): Promise<JobPostDto[]> {
     return await this.jobPostService.listJobPosts({ userId });
   }
 
   @Get(':id')
   @ApiOperation(showSwagger)
-  async findOne(
+  async show(
     @Param('id') id: string,
     @Req() { userId }: Request
-  ): Promise<JobPost> {
+  ): Promise<JobPostDto> {
     const res = await this.jobPostService.getJobPost({ id, userId });
-    if (res === null) throw new Error('Job post not found.');
+    if (res === null) throw new NotFoundException('Job post not found.');
     return res;
   }
 
@@ -58,12 +61,13 @@ export class JobPostController {
   async create(
     @Req() { userId }: Request,
     @Body(validationPipeline) body: TCreatePostParams
-  ): Promise<JobPost> {
+  ): Promise<JobPostDto | null> {
     const res = await this.jobPostService.createJobPost({
       jobPostParams: body,
       userId,
     });
-    if (res.id === undefined) throw new Error('Job post creation failed.');
+    if (!res || res.id === undefined)
+      throw new BadRequestException('Job post creation failed.');
     return res;
   }
 
@@ -73,13 +77,13 @@ export class JobPostController {
     @Param('id') id: string,
     @Req() { userId }: Request,
     @Body(validationPipeline) body: TCreatePostParams
-  ): Promise<JobPost> {
+  ): Promise<JobPostDto> {
     const res = await this.jobPostService.updateJobPost({
       jobPostParams: body,
       id,
       userId,
     });
-    if (res === null) throw new Error('Job post update failed.');
+    if (res === null) throw new BadRequestException('Job post update failed.');
     return res;
   }
 
@@ -91,7 +95,7 @@ export class JobPostController {
     @Req() { userId }: Request
   ): Promise<void> {
     const res = await this.jobPostService.deleteJobPost({ id, userId });
-    if (!res) throw new Error('Job post deletion failed.');
+    if (!res) throw new NotFoundException('Job post deletion failed.');
   }
 }
 

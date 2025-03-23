@@ -5,6 +5,7 @@ import {
   type TCreatePostParams,
 } from './job-post.controller';
 import type { JobPostDatabase } from './job-post.database';
+import { JobPostDto } from './job-post.dto';
 import { JobPost } from './job-post.entity';
 import { JobPostService } from './job-post.service';
 
@@ -27,6 +28,7 @@ describe('JobPostController', () => {
     workModel: 'on-site',
     userId: 'user1',
   });
+  const mockJobPostDto = JobPostDto.from(mockJobPost);
   const mockJobPost2 = new JobPost({
     id: '2',
     title: 'Software Engineer',
@@ -35,6 +37,7 @@ describe('JobPostController', () => {
     workModel: 'on-site',
     userId: 'user1',
   });
+  const mockJobPostDto2 = JobPostDto.from(mockJobPost2);
 
   const mockLogger = {
     error: jest.fn(),
@@ -54,13 +57,13 @@ describe('JobPostController', () => {
     controller = module.get<JobPostController>(JobPostController);
   });
 
-  describe('findAll', () => {
+  describe('index', () => {
     it('should return empty array when no posts exist', async () => {
       mockJobPostDatabase.findAll.mockResolvedValue({
         ok: true,
         data: [],
       });
-      const result = await controller.findAll({ userId: 'user1' });
+      const result = await controller.index({ userId: 'user1' });
       expect(result).toEqual([]);
     });
 
@@ -70,20 +73,20 @@ describe('JobPostController', () => {
         ok: true,
         data: mockPosts,
       });
-      const result = await controller.findAll({ userId: 'user1' });
-      expect(result).toEqual(mockPosts);
+      const result = await controller.index({ userId: 'user1' });
+      expect(result).toEqual([mockJobPostDto, mockJobPostDto2]);
       expect(result).toHaveLength(2);
     });
   });
 
-  describe('findOne', () => {
+  describe('show', () => {
     it('should return a job post when it exists', async () => {
       mockJobPostDatabase.findById.mockResolvedValue({
         ok: true,
         data: mockJobPost,
       });
-      const result = await controller.findOne('1', { userId: 'user1' });
-      expect(result).toEqual(mockJobPost);
+      const result = await controller.show('1', { userId: 'user1' });
+      expect(result).toEqual(mockJobPostDto);
     });
 
     it('should throw error when post does not exist', async () => {
@@ -92,7 +95,7 @@ describe('JobPostController', () => {
         error: 'Job post not found',
       });
       await expect(
-        controller.findOne('999', { userId: 'user1' })
+        controller.show('999', { userId: 'user1' })
       ).rejects.toThrow();
     });
   });
@@ -111,12 +114,13 @@ describe('JobPostController', () => {
         id: '3',
       });
       const result = await controller.create({ userId: 'user1' }, createParams);
-      expect(result.id).toBe('3');
-      expect(result.title).toBe(createParams.title);
-      expect(result.description).toBe(createParams.description);
-      expect(result.salary).toBe(createParams.salary);
-      expect(result.workModel).toBe(createParams.workModel);
-      expect(result.userId).toBe('user1');
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe('3');
+      expect(result?.title).toBe(createParams.title);
+      expect(result?.description).toBe(createParams.description);
+      expect(result?.salary).toBe(createParams.salary);
+      expect(result?.workModel).toBe(createParams.workModel);
+      expect(result?.userId).toBe('user1');
     });
 
     it('should throw error when an error occurs', async () => {

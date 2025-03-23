@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -11,10 +16,11 @@ export class AuthGuardJWT implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const [authType, token] = request.headers.authorization?.split(' ') ?? []; // Header named 'Authorization'
+    if (authType !== 'Bearer' || !token) throw new UnauthorizedException();
+
     // TODO: decode token and get userId.
     // ||= is in case we want to use parallel auth methods in the future to avoid overwriting userId.
     request.userId ||= authType === 'Bearer' ? token : undefined;
-
-    return request.userId !== undefined;
+    return !!request.userId;
   }
 }
