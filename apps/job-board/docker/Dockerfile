@@ -11,8 +11,7 @@ ENV PORT=3000
 
 WORKDIR /app
 
-RUN addgroup --system job-board && \
-          adduser --system -G job-board job-board
+RUN addgroup --system job-board && adduser --system -G job-board job-board
 
 COPY apps/job-board/dist job-board/
 RUN chown -R job-board:job-board .
