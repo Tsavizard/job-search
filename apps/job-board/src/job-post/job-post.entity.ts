@@ -4,7 +4,7 @@ export class JobPost {
   title: string;
   description: string;
   private _salary!: number;
-  private _employmentType!: TEmploymentType;
+  private _workModel!: TWorkModel;
   private _userId!: string;
   private _id?: string;
 
@@ -13,14 +13,14 @@ export class JobPost {
     title,
     description,
     salary,
-    employmentType,
+    workModel,
     userId,
   }: JobPostParams) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.salary = salary;
-    this.employmentType = employmentType;
+    this.workModel = workModel;
     this.userId = userId;
   }
 
@@ -33,13 +33,13 @@ export class JobPost {
     this._salary = newSalary;
   }
 
-  get employmentType() {
-    return this._employmentType;
+  get workModel() {
+    return this._workModel;
   }
 
-  set employmentType(newType: TEmploymentType) {
-    this.isValidEmploymentType(newType);
-    this._employmentType = newType;
+  set workModel(newType: TWorkModel) {
+    this.isValidWorkModel(newType);
+    this._workModel = newType;
   }
 
   get userId() {
@@ -78,13 +78,12 @@ export class JobPost {
     throw new Error('Salary must be a positive number');
   }
 
-  private isValidEmploymentType(
-    potentialEmployment: unknown
-  ): potentialEmployment is TEmploymentType {
-    if (employmentTypeSet.has(potentialEmployment as TEmploymentType))
-      return true;
+  private isValidWorkModel(
+    potentialWorkModel: unknown
+  ): potentialWorkModel is TWorkModel {
+    if (workModelSet.has(potentialWorkModel as TWorkModel)) return true;
 
-    throw new Error('Employment type must be one of: on-site, hybrid, remote');
+    throw new Error('Work model must be one of: on-site, hybrid, remote');
   }
 
   private isValidUserId(uid: unknown): uid is string {
@@ -102,19 +101,15 @@ export class JobPost {
   }
 }
 
-const employmentTypeSet = new Set<TEmploymentType>([
-  'on-site',
-  'hybrid',
-  'remote',
-]);
+const workModelSet = new Set<TWorkModel>(['on-site', 'hybrid', 'remote']);
 
-export type TEmploymentType = 'on-site' | 'hybrid' | 'remote';
+export type TWorkModel = 'on-site' | 'hybrid' | 'remote';
 
 type JobPostParams = {
   id?: string;
   title: string;
   description: string;
   salary: number;
-  employmentType: TEmploymentType;
+  workModel: TWorkModel;
   userId: string;
 };

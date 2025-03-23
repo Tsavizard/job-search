@@ -8,7 +8,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       })
     ).toBeDefined();
@@ -21,7 +21,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(jobPost).toBeInstanceOf(JobPost);
@@ -33,14 +33,14 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(jobPost.id).toBe('some_id');
       expect(jobPost.title).toBe('Developer');
       expect(jobPost.description).toBe('Description');
       expect(jobPost.salary).toBe(50000);
-      expect(jobPost.employmentType).toBe('remote');
+      expect(jobPost.workModel).toBe('remote');
       expect(jobPost.userId).toBe('123');
     });
   });
@@ -52,7 +52,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(jobPost.id).toBe('some_id');
@@ -65,7 +65,7 @@ describe('JobPost', () => {
           title: 'Developer',
           description: 'Description',
           salary: 50000,
-          employmentType: 'remote',
+          workModel: 'remote',
           userId: '123',
         });
       }).toThrow('Id cannot be empty');
@@ -79,7 +79,7 @@ describe('JobPost', () => {
           title: 'Developer',
           description: 'Description',
           salary: 50000,
-          employmentType: 'remote',
+          workModel: 'remote',
           userId: '123',
         });
       }).toThrow('Id must be a string');
@@ -93,7 +93,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 500.4,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(jobPost.salary).toBe(500.4);
@@ -105,7 +105,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(() => {
@@ -121,7 +121,7 @@ describe('JobPost', () => {
           title: 'Developer',
           description: 'Description',
           salary: -50000,
-          employmentType: 'remote',
+          workModel: 'remote',
           userId: '123',
         });
       }).toThrow('Salary must be a positive number');
@@ -140,27 +140,27 @@ describe('JobPost', () => {
     });
   });
 
-  describe('employmentType', () => {
-    it('should accept valid employment types', () => {
-      const types: ['on-site', 'hybrid', 'remote'] = [
+  describe('workModel', () => {
+    it('should accept a valid work model', () => {
+      const models: ['on-site', 'hybrid', 'remote'] = [
         'on-site',
         'hybrid',
         'remote',
       ];
-      types.forEach((type) => {
+      models.forEach((model) => {
         const jobPost = new JobPost({
           id: 'some_id',
           title: 'Developer',
           description: 'Description',
           salary: 50000,
-          employmentType: type,
+          workModel: model,
           userId: '123',
         });
-        expect(jobPost.employmentType).toBe(type);
+        expect(jobPost.workModel).toBe(model);
       });
     });
 
-    it('should throw error for invalid employment type', () => {
+    it('should throw error for invalid work model', () => {
       expect(() => {
         new JobPost({
           id: 'some_id',
@@ -168,13 +168,13 @@ describe('JobPost', () => {
           description: 'Description',
           salary: 50000,
           // @ts-expect-error: Testing invalid type
-          employmentType: 'invalid type',
+          workModel: 'invalid type',
           userId: '123',
         });
-      }).toThrow('Employment type must be one of: on-site, hybrid, remote');
+      }).toThrow('Work model must be one of: on-site, hybrid, remote');
     });
 
-    it('should reject employment type with wrong case', () => {
+    it('should reject work model with wrong case', () => {
       expect(() => {
         new JobPost({
           id: 'some_id',
@@ -182,10 +182,10 @@ describe('JobPost', () => {
           description: 'Description',
           salary: 50000,
           // @ts-expect-error: Testing invalid type
-          employmentType: 'REMOTE',
+          workModel: 'REMOTE',
           userId: '123',
         });
-      }).toThrow('Employment type must be one of: on-site, hybrid, remote');
+      }).toThrow('Work model must be one of: on-site, hybrid, remote');
     });
   });
 
@@ -196,7 +196,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(jobPost.userId).toBe('123');
@@ -209,7 +209,7 @@ describe('JobPost', () => {
           title: 'Developer',
           description: 'Description',
           salary: 50000,
-          employmentType: 'remote',
+          workModel: 'remote',
           userId: ' ',
         });
       }).toThrow('UserId cannot be empty');
@@ -222,7 +222,7 @@ describe('JobPost', () => {
           title: 'Developer',
           description: 'Description',
           salary: 50000,
-          employmentType: 'remote',
+          workModel: 'remote',
           // @ts-expect-error: Testing invalid type
           userId: null,
         });
@@ -236,7 +236,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       jobPost.save('new_id');
@@ -249,7 +249,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(() => jobPost.save('new_id')).toThrow(
@@ -262,7 +262,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(() => jobPost.save('')).toThrow('Id cannot be empty');
@@ -273,7 +273,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
       expect(() => {
@@ -292,7 +292,7 @@ describe('JobPost', () => {
         title: 'Developer',
         description: 'Description',
         salary: 50000,
-        employmentType: 'remote',
+        workModel: 'remote',
         userId: '123',
       });
 

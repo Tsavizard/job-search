@@ -29,7 +29,7 @@ describe('JobPostDatabase', () => {
           title: 'Developer',
           description: 'Coding job',
           salary: 1000,
-          employmentType: 'on-site',
+          work_model: 'on-site',
           userId: 'user1',
           createdAt: new Date().toISOString(),
           update: new Date().toISOString(),
@@ -60,7 +60,7 @@ describe('JobPostDatabase', () => {
         title: 'Developer',
         description: 'Coding job',
         salary: 1000,
-        employmentType: 'on-site',
+        work_model: 'on-site',
         userId: 'user1',
         createdAt: new Date(),
         update: new Date(),
@@ -97,7 +97,7 @@ describe('JobPostDatabase', () => {
         title: 'Developer',
         description: 'Coding job',
         salary: 1000,
-        employmentType: 'on-site',
+        workModel: 'on-site',
         userId: 'user1',
       });
       mockConnection.execute.mockResolvedValueOnce([
@@ -112,7 +112,7 @@ describe('JobPostDatabase', () => {
         jobPost.title,
         jobPost.description,
         100000,
-        jobPost.employmentType,
+        jobPost.workModel,
         jobPost.userId,
       ]);
     });
@@ -125,7 +125,7 @@ describe('JobPostDatabase', () => {
         title: 'Senior Developer',
         description: 'Updated job',
         salary: 2000,
-        employmentType: 'on-site',
+        workModel: 'on-site',
         userId: 'user1',
       });
       mockConnection.execute.mockResolvedValueOnce([
@@ -140,7 +140,7 @@ describe('JobPostDatabase', () => {
         jobPost.title,
         jobPost.description,
         200000,
-        jobPost.employmentType,
+        jobPost.workModel,
         jobPost.id,
         jobPost.userId,
       ]);

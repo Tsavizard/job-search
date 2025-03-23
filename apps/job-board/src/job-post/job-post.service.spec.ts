@@ -14,7 +14,7 @@ describe('JobPostService', () => {
     title: 'Test Job',
     description: 'Test Description',
     salary: 50000,
-    employmentType: 'remote',
+    workModel: 'remote',
     userId,
   });
   const mockLogger = {
@@ -90,7 +90,7 @@ describe('JobPostService', () => {
           title: 'Test Job',
           description: 'Test Description',
           salary: 50000,
-          employmentType: 'remote',
+          workModel: 'remote',
         },
       });
       expect(result.id).toBe(jobPostId);
@@ -108,7 +108,7 @@ describe('JobPostService', () => {
           title: 'Test Job',
           description: 'Test Description',
           salary: 50000,
-          employmentType: 'remote',
+          workModel: 'remote',
         },
       });
       expect(result.id).toBeUndefined();
@@ -125,7 +125,7 @@ describe('JobPostService', () => {
           title: 'Updated Job',
           description: 'Updated Description',
           salary: 60000,
-          employmentType: 'hybrid',
+          workModel: 'hybrid',
         },
       });
       expect(result).toBeInstanceOf(JobPost);

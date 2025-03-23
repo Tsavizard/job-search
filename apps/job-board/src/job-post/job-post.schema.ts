@@ -18,10 +18,10 @@ export const JobPostSchema = z
       })
       .nonnegative('Salary must be a non-negative number')
       .safe(),
-    employmentType: z
+    workModel: z
       .string({
-        required_error: 'Employment type is required',
-        invalid_type_error: 'Employment type must be a string',
+        required_error: 'Work model is required',
+        invalid_type_error: 'Work model must be a string',
       })
       .trim(),
   })

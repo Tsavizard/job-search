@@ -14,7 +14,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuardJWT } from '../lib/AuthGuard.jwt';
 import { ZodValidationPipe } from '../lib/ZodValidationPipe';
-import { JobPost, type TEmploymentType } from './job-post.entity';
+import { JobPost, type TWorkModel } from './job-post.entity';
 import { JobPostSchema } from './job-post.schema';
 import { JobPostService } from './job-post.service';
 import {
@@ -100,5 +100,5 @@ export type TCreatePostParams = {
   title: string;
   description: string;
   salary: number;
-  employmentType: TEmploymentType;
+  workModel: TWorkModel;
 };

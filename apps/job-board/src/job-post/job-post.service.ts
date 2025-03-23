@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JobPostDatabase } from './job-post.database';
-import { JobPost, type TEmploymentType } from './job-post.entity';
+import { JobPost, type TWorkModel } from './job-post.entity';
 
 @Injectable()
 export class JobPostService {
@@ -86,5 +86,5 @@ export type TJobPostParams = {
   title: string;
   description: string;
   salary: number;
-  employmentType: TEmploymentType;
+  workModel: TWorkModel;
 };

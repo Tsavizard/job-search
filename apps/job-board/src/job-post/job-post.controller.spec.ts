@@ -24,7 +24,7 @@ describe('JobPostController', () => {
     title: 'Software Engineer',
     description: 'Test description',
     salary: 50000,
-    employmentType: 'on-site',
+    workModel: 'on-site',
     userId: 'user1',
   });
   const mockJobPost2 = new JobPost({
@@ -32,7 +32,7 @@ describe('JobPostController', () => {
     title: 'Software Engineer',
     description: 'Test description',
     salary: 50000,
-    employmentType: 'on-site',
+    workModel: 'on-site',
     userId: 'user1',
   });
 
@@ -103,7 +103,7 @@ describe('JobPostController', () => {
         title: 'New Job',
         description: 'Description',
         salary: 60000,
-        employmentType: 'remote',
+        workModel: 'remote',
       };
 
       mockJobPostDatabase.create.mockResolvedValue({
@@ -115,7 +115,7 @@ describe('JobPostController', () => {
       expect(result.title).toBe(createParams.title);
       expect(result.description).toBe(createParams.description);
       expect(result.salary).toBe(createParams.salary);
-      expect(result.employmentType).toBe(createParams.employmentType);
+      expect(result.workModel).toBe(createParams.workModel);
       expect(result.userId).toBe('user1');
     });
 
@@ -130,7 +130,7 @@ describe('JobPostController', () => {
           title: 'New Job',
           description: 'Description',
           salary: 60000,
-          employmentType: 'remote',
+          workModel: 'remote',
         } as TCreatePostParams)
       ).rejects.toThrow();
     });
@@ -162,7 +162,7 @@ describe('JobPostController', () => {
           title: 'Updated Title',
           description: 'Description',
           salary: 60000,
-          employmentType: 'remote',
+          workModel: 'remote',
         }
       );
       expect(result.title).toBe('Updated Title');
@@ -182,7 +182,7 @@ describe('JobPostController', () => {
             title: 'New Title',
             description: 'Description',
             salary: 60000,
-            employmentType: 'remote',
+            workModel: 'remote',
           }
         )
       ).rejects.toThrow();
@@ -198,7 +198,7 @@ describe('JobPostController', () => {
             description: 'Description',
             // @ts-expect-error Testing invalid payload
             foo: 'bar',
-            employmentType: 'remote',
+            workModel: 'remote',
           }
         )
       ).rejects.toThrow();

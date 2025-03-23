@@ -11,7 +11,7 @@ import type {
   DbQueryResult,
   IDatabase,
 } from '../types/database';
-import { JobPost, type TEmploymentType } from './job-post.entity';
+import { JobPost, type TWorkModel } from './job-post.entity';
 
 @Injectable()
 export class JobPostDatabase implements IDatabase<JobPost> {
@@ -22,7 +22,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
   async findAll(userId: string): Promise<DbQueryResult<JobPost[]>> {
     try {
       const QUERY =
-        'SELECT id, title, description, salary as salary, employmentType, userId FROM job_posts WHERE userId = ?';
+        'SELECT id, title, description, salary as salary, work_model, userId FROM job_posts WHERE userId = ?';
       const [rows] = await this.dbConnection.execute<FindRes[]>(QUERY, [
         userId,
       ]);
@@ -34,7 +34,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
             title: r.title,
             description: r.description,
             salary: parseFloat((r.salary / 100).toFixed(2)),
-            employmentType: r.employmentType,
+            workModel: r.work_model,
             userId: r.userId,
           })
       );
@@ -50,7 +50,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
   ): Promise<DbQueryResult<JobPost | null>> {
     try {
       const [rows] = await this.dbConnection.execute<FindRes[]>(
-        'SELECT id, title, description, salary as salary, employmentType, userId FROM job_posts WHERE id = ? and userId = ?',
+        'SELECT id, title, description, salary as salary, work_model, userId FROM job_posts WHERE id = ? and userId = ?',
         [id, userId]
       );
       assert(rows.length <= 1, 'JobPostDatabase: retrieved more than one');
@@ -64,7 +64,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
         title: rows[0].title,
         description: rows[0].description,
         salary: parseFloat((rows[0].salary / 100).toFixed(2)),
-        employmentType: rows[0].employmentType,
+        workModel: rows[0].work_model,
         userId: rows[0].userId,
       });
       return { ok: true, data: post };
@@ -77,12 +77,12 @@ export class JobPostDatabase implements IDatabase<JobPost> {
     try {
       const salaryInCents = Math.trunc(jobPost.salary * 100);
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
-        'INSERT INTO job_posts (title, description, salary, employmentType, userId) VALUES (?, ?, ?, ?, ?)',
+        'INSERT INTO job_posts (title, description, salary, work_model, userId) VALUES (?, ?, ?, ?, ?)',
         [
           jobPost.title,
           jobPost.description,
           salaryInCents,
-          jobPost.employmentType,
+          jobPost.workModel,
           jobPost.userId,
         ]
       );
@@ -99,12 +99,12 @@ export class JobPostDatabase implements IDatabase<JobPost> {
     try {
       const salaryInCents = Math.trunc(jobPost.salary * 100);
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
-        'UPDATE job_posts SET title = ?, description = ?, salary = ?, employmentType = ? WHERE id = ? AND userId = ? RETURNING id',
+        'UPDATE job_posts SET title = ?, description = ?, salary = ?, work_model = ? WHERE id = ? AND userId = ? RETURNING id',
         [
           jobPost.title,
           jobPost.description,
           salaryInCents,
-          jobPost.employmentType,
+          jobPost.workModel,
           jobPost.id,
           jobPost.userId,
         ]
@@ -151,7 +151,7 @@ type JobPostDocument = {
   title: string;
   description: string;
   salary: number;
-  employmentType: TEmploymentType;
+  work_model: TWorkModel;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
