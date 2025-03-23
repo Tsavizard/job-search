@@ -1,5 +1,5 @@
 CREATE TABLE job_posts (
-  id VARCHAR(36) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
   salary INT NOT NULL,
