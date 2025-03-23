@@ -26,14 +26,14 @@ export class JobPostDatabase implements IDatabase<JobPost> {
       const [rows] = await this.dbConnection.execute<FindRes[]>(QUERY, [
         userId,
       ]);
-      console.log(rows);
+
       const posts = rows.map(
         (r) =>
           new JobPost({
             id: r.id,
             title: r.title,
             description: r.description,
-            salary: r.salary,
+            salary: parseFloat((r.salary / 100).toFixed(2)),
             employmentType: r.employmentType,
             userId: r.userId,
           })
@@ -50,7 +50,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
   ): Promise<DbQueryResult<JobPost | null>> {
     try {
       const [rows] = await this.dbConnection.execute<FindRes[]>(
-        'SELECT id, title, description, salary/100 as salary, employmentType, userId FROM job_posts WHERE id = ? and userId = ?',
+        'SELECT id, title, description, salary as salary, employmentType, userId FROM job_posts WHERE id = ? and userId = ?',
         [id, userId]
       );
       assert(rows.length <= 1, 'JobPostDatabase: retrieved more than one');
@@ -63,7 +63,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
         id: rows[0].id,
         title: rows[0].title,
         description: rows[0].description,
-        salary: rows[0].salary,
+        salary: parseFloat((rows[0].salary / 100).toFixed(2)),
         employmentType: rows[0].employmentType,
         userId: rows[0].userId,
       });
@@ -75,7 +75,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
 
   async create(jobPost: JobPost): Promise<DbCommandResult> {
     try {
-      const salaryInCents = Math.round(jobPost.salary * 100);
+      const salaryInCents = Math.trunc(jobPost.salary * 100);
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
         'INSERT INTO job_posts (title, description, salary, employmentType, userId) VALUES (?, ?, ?, ?, ?)',
         [
@@ -97,7 +97,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
 
   async update(jobPost: JobPost): Promise<DbCommandResult> {
     try {
-      const salaryInCents = Math.round(jobPost.salary * 100);
+      const salaryInCents = Math.trunc(jobPost.salary * 100);
       const [res] = await this.dbConnection.execute<ResultSetHeader>(
         'UPDATE job_posts SET title = ?, description = ?, salary = ?, employmentType = ? WHERE id = ? AND userId = ? RETURNING id',
         [

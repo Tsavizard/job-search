@@ -39,7 +39,7 @@ export class JobPostController {
   @Get()
   @ApiOperation(indexSwagger)
   async findAll(@Req() { userId }: Request): Promise<JobPost[]> {
-    return await this.jobPostService.listJobPosts({ userId: userId });
+    return await this.jobPostService.listJobPosts({ userId });
   }
 
   @Get(':id')
@@ -48,7 +48,7 @@ export class JobPostController {
     @Param('id') id: string,
     @Req() { userId }: Request
   ): Promise<JobPost> {
-    const res = await this.jobPostService.getJobPost({ id, userId: userId });
+    const res = await this.jobPostService.getJobPost({ id, userId });
     if (res === null) throw new Error('Job post not found.');
     return res;
   }
