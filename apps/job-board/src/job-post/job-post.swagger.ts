@@ -26,9 +26,23 @@ const errorBody = {
   },
 };
 
+const badRequestResponse = {
+  400: {
+    description: 'Bad request',
+    ...errorBody,
+  },
+};
+
 const forbiddenResponse = {
   403: {
     description: 'Forbidden',
+    ...errorBody,
+  },
+};
+
+const internalError = {
+  500: {
+    description: 'Internal Server Error',
     ...errorBody,
   },
 };
@@ -49,6 +63,7 @@ export const indexSwagger: ApiOperationOptions = {
       },
     },
     ...forbiddenResponse,
+    ...internalError,
   },
 };
 
@@ -67,6 +82,7 @@ export const showSwagger: ApiOperationOptions = {
       ...errorBody,
     },
     ...forbiddenResponse,
+    ...internalError,
   },
 };
 
@@ -95,11 +111,9 @@ export const postSwaggerBody: ApiOperationOptions = {
         'application/json': { schema: jobPostSchema },
       },
     },
-    400: {
-      description: 'Bad request',
-      ...errorBody,
-    },
+    ...badRequestResponse,
     ...forbiddenResponse,
+    ...internalError,
   },
 };
 
@@ -129,11 +143,9 @@ export const putSwaggerBody: ApiOperationOptions = {
         'application/json': { schema: jobPostSchema },
       },
     },
-    400: {
-      description: 'Bad request',
-      ...errorBody,
-    },
+    ...badRequestResponse,
     ...forbiddenResponse,
+    ...internalError,
   },
 };
 
@@ -144,10 +156,8 @@ export const deleteSwagger: ApiOperationOptions = {
     204: {
       description: 'Job post deleted',
     },
-    400: {
-      description: 'Bad request',
-      ...errorBody,
-    },
+    ...badRequestResponse,
     ...forbiddenResponse,
+    ...internalError,
   },
 };
