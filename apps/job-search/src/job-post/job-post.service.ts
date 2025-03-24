@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import type { ElasticSearchService } from '../lib/elastic/elasticsearch.service';
+import { ElasticGatewayService } from '../lib/elastic/elastic.gateway.service';
 import type { JobPost, PaginatedResponse, TListQuery } from '../types';
 
 @Injectable()
@@ -7,7 +7,8 @@ export class JobPostService {
   index = 'job-posts';
 
   constructor(
-    private readonly elasticSearchService: ElasticSearchService<JobPost>,
+    @Inject(ElasticGatewayService)
+    private readonly elasticSearchService: ElasticGatewayService<JobPost>,
     @Inject(Logger) private readonly logger: Logger
   ) {}
 

@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
-import { ElasticSearchService } from './elasticsearch.service';
+import { ElasticGatewayService } from './elastic.gateway.service';
 
 @Module({
   imports: [
+    ConfigModule,
     ElasticsearchModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -17,7 +18,15 @@ import { ElasticSearchService } from './elasticsearch.service';
       }),
     }),
   ],
-  providers: [ElasticSearchService],
-  exports: [ElasticSearchService],
+  providers: [
+    ElasticGatewayService,
+    {
+      provide: Logger,
+      useFactory: () => {
+        return new Logger(ElasticGatewayService.name, { timestamp: true });
+      },
+    },
+  ],
+  exports: [ElasticsearchModule, ElasticGatewayService],
 })
 export class ElasticSearchModule {}

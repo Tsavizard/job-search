@@ -1,6 +1,6 @@
 import type { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import type { ElasticSearchService } from '../lib/elastic/elasticsearch.service';
+import type { ElasticGatewayService } from '../lib/elastic/elastic.gateway.service';
 import type { JobPost } from '../types';
 import { JobPostRpcController } from './job-post.rpc.controller';
 import { JobPostService } from './job-post.service';
@@ -21,7 +21,7 @@ describe('JobPostRpcController', () => {
     indexDocument: jest.fn(),
     search: jest.fn(),
     deleteDocument: jest.fn(),
-  } as unknown as jest.Mocked<ElasticSearchService<JobPost>>;
+  } as unknown as jest.Mocked<ElasticGatewayService<JobPost>>;
 
   const mockLogger = {
     error: jest.fn(),

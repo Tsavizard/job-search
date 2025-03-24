@@ -8,13 +8,13 @@ import { JobPostService } from './job-post.service';
   imports: [ElasticSearchModule],
   controllers: [JobPostRpcController, JobPostApiController],
   providers: [
+    JobPostService,
     {
       provide: Logger,
       useFactory: () => {
         return new Logger(JobPostService.name, { timestamp: true });
       },
     },
-    JobPostService,
   ],
 })
 export class JobPostModule {}

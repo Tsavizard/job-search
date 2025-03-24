@@ -8,12 +8,12 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/apps/job-board/envs/.env.${
+      envFilePath: `${process.cwd()}/apps/job-search/envs/.env.${
         process.env.NODE_ENV
       }`,
     }),
-    JobPostModule,
     ElasticSearchModule,
+    JobPostModule,
   ],
   controllers: [AppController],
   providers: [AppService],

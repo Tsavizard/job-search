@@ -9,7 +9,6 @@ import { KafkaProducerService } from './kafka.producer.service';
   providers: [
     KafkaProducerService,
     JobPostEventsService,
-    // JobPostEventsConsumer,
     {
       provide: Logger,
       useFactory: () => {

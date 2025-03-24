@@ -1,12 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import type { ElasticSearchService } from '../lib/elastic/elasticsearch.service';
+import type { ElasticGatewayService } from '../lib/elastic/elastic.gateway.service';
 import type { JobPost } from '../types';
 import { JobPostService } from './job-post.service';
 
 describe('JobPostService', () => {
   let service: JobPostService;
-  let mockES: jest.Mocked<ElasticSearchService<JobPost>>;
+  let mockES: jest.Mocked<ElasticGatewayService<JobPost>>;
   const userId = 'test-user-id';
   const jobPostId = 'test-post-id';
   const mockJobPost: JobPost = {
@@ -26,7 +26,7 @@ describe('JobPostService', () => {
       indexDocument: jest.fn(),
       search: jest.fn(),
       deleteDocument: jest.fn(),
-    } as unknown as jest.Mocked<ElasticSearchService<JobPost>>;
+    } as unknown as jest.Mocked<ElasticGatewayService<JobPost>>;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [

@@ -1,10 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import type { ElasticsearchService as Elastic } from '@nestjs/elasticsearch';
+import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Injectable()
-export class ElasticSearchService<T extends DocumentData> {
+export class ElasticGatewayService<T extends DocumentData> {
   constructor(
-    private readonly es: Elastic,
+    private readonly es: ElasticsearchService,
     @Inject(Logger) private readonly logger: Logger
   ) {}
 
