@@ -7,6 +7,17 @@
       "@karriera-test/job-board"
     ],
     "targets": {
+      "pre-e2e": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "docker exec -i karriera-job-board-db-dev mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-board < apps/job-board/docker/mysql/utils/clear-job-posts.sql",
+            "docker exec -i karriera-job-board-db-dev mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-board < apps/job-board/docker/mysql/init/2025-03-22-seed-job-posts-table.sql"
+          ],
+          "envFile": "apps/job-board/envs/.env.development",
+          "parallel": false
+        }
+      },
       "e2e": {
         "executor": "@nx/jest:jest",
         "outputs": [
@@ -17,7 +28,7 @@
           "passWithNoTests": true
         },
         "dependsOn": [
-          "@karriera-test/job-board:serve:development"
+          "pre-e2e"
         ]
       }
     }

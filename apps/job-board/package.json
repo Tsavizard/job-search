@@ -20,11 +20,22 @@
           }
         }
       },
+      "start-docker": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "apps/job-board/tools/scripts/dev.sh"
+          ],
+          "envFile": "apps/job-board/envs/.env.development",
+          "parallel": false
+        }
+      },
       "serve": {
         "executor": "@nx/js:node",
         "defaultConfiguration": "development",
         "dependsOn": [
-          "build"
+          "build",
+          "start-docker"
         ],
         "options": {
           "buildTarget": "@karriera-test/job-board:build",

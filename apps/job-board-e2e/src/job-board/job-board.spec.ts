@@ -48,7 +48,7 @@ describe('Job Posts API', () => {
       expect(res.status).toBe(200);
       expect(Array.isArray(res.data.data)).toBe(true);
       expect(res.data.meta).toStrictEqual({
-        total: 1,
+        total: 3,
         page: 1,
         limit: 10,
         totalPages: 1,

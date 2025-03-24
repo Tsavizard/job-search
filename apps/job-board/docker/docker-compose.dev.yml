@@ -11,21 +11,21 @@ services:
       - mysql_data-dev:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
 
-  # job-board-dev:
-  #   build:
-  #     context: ..
-  #     dockerfile: Dockerfile
-  #   container_name: karriera-job-board-dev
-  #   restart: always
-  #   env_file:
-  #     - ../envs/.env.development
-  #   ports:
-  #     - '${PORT:-3000}:3000'
-  #   volumes:
-  #     - ../:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - mysql-dev
+  job-board-dev:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: karriera-job-board-dev
+    restart: always
+    env_file:
+      - ../envs/.env.development
+    ports:
+      - '${PORT:-3000}:3000'
+    volumes:
+      - ../:/app
+      - /app/node_modules
+    depends_on:
+      - mysql-dev
 
   job-board-kafka:
     image: confluentinc/cp-kafka:latest
