@@ -1,4 +1,4 @@
-import type { ApiOperationOptions } from '@nestjs/swagger';
+import type { ApiOperationOptions } from '@nestjs/swagger'
 
 const jobPostSchema = {
   type: 'object',
@@ -49,7 +49,30 @@ const internalError = {
 
 export const indexSwagger: ApiOperationOptions = {
   summary: 'Retrieve all job posts for user',
-  parameters: [],
+  parameters: [
+    {
+      in: 'query',
+      name: 'page',
+      example: 1,
+      required: false,
+      schema: {
+        type: 'integer',
+        default: '',
+      },
+      description: 'Page to request',
+    },
+    {
+      in: 'query',
+      name: 'limit',
+      example: 10,
+      required: false,
+      schema: {
+        type: 'integer',
+        default: '',
+      },
+      description: 'Page size',
+    },
+  ],
   responses: {
     200: {
       description: 'Job posts found',
@@ -69,7 +92,7 @@ export const indexSwagger: ApiOperationOptions = {
 
 export const showSwagger: ApiOperationOptions = {
   summary: 'Retrieve job post by id and userId',
-  parameters: [{ name: 'id', in: 'path' as const, required: true }],
+  parameters: [{ name: 'id', in: 'path', required: true }],
   responses: {
     200: {
       description: 'Job post found',
@@ -119,7 +142,7 @@ export const postSwaggerBody: ApiOperationOptions = {
 
 export const putSwaggerBody: ApiOperationOptions = {
   summary: 'Update job post by id and userId',
-  parameters: [{ name: 'id', in: 'path' as const, required: true }],
+  parameters: [{ name: 'id', in: 'path' , required: true }],
   requestBody: {
     content: {
       'application/json': {
@@ -151,7 +174,7 @@ export const putSwaggerBody: ApiOperationOptions = {
 
 export const deleteSwagger: ApiOperationOptions = {
   summary: 'Delete job post by id and userId',
-  parameters: [{ name: 'id', in: 'path' as const, required: true }],
+  parameters: [{ name: 'id', in: 'path' , required: true }],
   responses: {
     204: {
       description: 'Job post deleted',

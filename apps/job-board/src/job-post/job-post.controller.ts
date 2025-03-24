@@ -2,23 +2,32 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuardJWT } from '../lib/AuthGuard.jwt';
 import { ZodValidationPipe } from '../lib/ZodValidationPipe';
+import type { PaginatedResponse } from '../types';
 import type { JobPostDto } from './job-post.dto';
 import { type TWorkModel } from './job-post.entity';
-import { JobPostSchema } from './job-post.schema';
+import { JobPostSchema, LimitSchema, PageSchema } from './job-post.schema';
 import { JobPostService } from './job-post.service';
 import {
   deleteSwagger,
@@ -28,9 +37,11 @@ import {
   showSwagger,
 } from './job-post.swagger';
 
-const validationPipeline = new ZodValidationPipe<TCreatePostParams>(
+const jobPostBodyValidationPipeline = new ZodValidationPipe<TCreatePostParams>(
   JobPostSchema
 );
+const pageValidator = new ZodValidationPipe(PageSchema);
+const limitValidator = new ZodValidationPipe(LimitSchema);
 
 @ApiTags('Job Posts')
 @ApiBearerAuth()
@@ -41,8 +52,20 @@ export class JobPostController {
 
   @Get()
   @ApiOperation(indexSwagger)
-  async index(@Req() { userId }: Request): Promise<JobPostDto[]> {
-    return await this.jobPostService.listJobPosts({ userId });
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  async index(
+    @Req() { userId }: Request,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe, pageValidator)
+    page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe, limitValidator)
+    limit: number
+  ): Promise<PaginatedResponse<JobPostDto>> {
+    return await this.jobPostService.listJobPosts({
+      userId,
+      page,
+      limit,
+    });
   }
 
   @Get(':id')
@@ -60,7 +83,7 @@ export class JobPostController {
   @ApiOperation(postSwaggerBody)
   async create(
     @Req() { userId }: Request,
-    @Body(validationPipeline) body: TCreatePostParams
+    @Body(jobPostBodyValidationPipeline) body: TCreatePostParams
   ): Promise<JobPostDto | null> {
     const res = await this.jobPostService.createJobPost({
       jobPostParams: body,
@@ -76,7 +99,7 @@ export class JobPostController {
   async update(
     @Param('id') id: string,
     @Req() { userId }: Request,
-    @Body(validationPipeline) body: TCreatePostParams
+    @Body(jobPostBodyValidationPipeline) body: TCreatePostParams
   ): Promise<JobPostDto> {
     const res = await this.jobPostService.updateJobPost({
       jobPostParams: body,

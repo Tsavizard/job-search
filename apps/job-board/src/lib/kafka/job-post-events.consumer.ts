@@ -18,7 +18,8 @@ export class JobPostEventsConsumer {
       this.logger.debug(
         'Consuming create event: ' + JSON.stringify(Object.keys(jobPostDto))
       );
-      return this.httpService.post(this.jobSearchBaseUrl, jobPostDto);
+      // return this.httpService.post(this.jobSearchBaseUrl, jobPostDto);
+      return;
     } catch (error) {
       this.logger.error(
         `Failed to sync created job post: ${(error as Error).message}`
@@ -30,10 +31,11 @@ export class JobPostEventsConsumer {
   @MessagePattern('job-posts.updated')
   async handleUpdated(@Payload() jobPostDto: JobPostDto) {
     try {
-      return this.httpService.put(
-        `${this.jobSearchBaseUrl}/${jobPostDto.id}`,
-        jobPostDto
-      );
+      // return this.httpService.put(
+      //   `${this.jobSearchBaseUrl}/${jobPostDto.id}`,
+      //   jobPostDto
+      // );
+      return;
     } catch (error) {
       this.logger.error(
         `Failed to sync updated job post: ${(error as Error).message}`
@@ -45,7 +47,8 @@ export class JobPostEventsConsumer {
   @MessagePattern('job-posts.deleted')
   async handleDeleted(@Payload() id: string) {
     try {
-      return this.httpService.delete(`${this.jobSearchBaseUrl}/${id}`);
+      // return this.httpService.delete(`${this.jobSearchBaseUrl}/${id}`);
+      return;
     } catch (error) {
       this.logger.error(
         `Failed to sync deleted job post: ${(error as Error).message}`

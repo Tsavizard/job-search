@@ -28,5 +28,16 @@ export const JobPostSchema = z
   .required()
   .strict();
 
-// Type for the CreateUserDto based on the Zod schema
-export type CreateUserDto = z.infer<typeof JobPostSchema>;
+export const PageSchema = z
+  .number({
+    invalid_type_error: 'Page must be a positive number',
+  })
+  .int()
+  .min(1);
+
+export const LimitSchema = z
+  .number({
+    invalid_type_error: 'Page must be a positive number',
+  })
+  .int()
+  .min(1);

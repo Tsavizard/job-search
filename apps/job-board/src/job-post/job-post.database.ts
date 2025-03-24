@@ -9,6 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { DATABASE_CONNECTION } from '../lib/Database';
 import type {
   DbCommandResult,
+  DbPaginatedQueryResult,
   DbQueryResult,
   IDatabase,
 } from '../types/database';
@@ -20,12 +21,30 @@ export class JobPostDatabase implements IDatabase<JobPost> {
     @Inject(DATABASE_CONNECTION) private readonly dbConnection: Connection
   ) {}
 
-  async findAll(userId: string): Promise<DbQueryResult<JobPost[]>> {
+  async findAll(
+    userId: string,
+    page = 1,
+    limit = 10
+  ): Promise<DbPaginatedQueryResult<JobPost[]>> {
     try {
-      const QUERY =
-        'SELECT id, title, description, salary as salary, work_model, userId FROM job_posts WHERE userId = ?';
-      const [rows] = await this.dbConnection.execute<FindRes[]>(QUERY, [
-        userId,
+      assert(
+        limit >= 0,
+        'Pagination limit must be greater than or equal to  0'
+      );
+      const offset = (page - 1) * limit;
+      assert(offset >= 0, 'Pagination page must be greater than or equal to 0');
+
+      const QUERY = `SELECT id, title, description, salary as salary, work_model, userId  FROM job_posts WHERE userId = ? LIMIT ? OFFSET ?`;
+      const COUNT =
+        'SELECT COUNT(*) as total_count FROM job_posts WHERE userId = ?';
+
+      const [[rows], [jobPostCountRows]] = await Promise.all([
+        this.dbConnection.execute<FindRes[]>(QUERY, [
+          userId,
+          limit.toString(),
+          offset.toString(),
+        ]),
+        this.dbConnection.execute<RowDataPacket[]>(COUNT, [userId]),
       ]);
 
       const posts = rows.map(
@@ -39,7 +58,7 @@ export class JobPostDatabase implements IDatabase<JobPost> {
             userId: r.userId,
           })
       );
-      return { ok: true, data: posts };
+      return { ok: true, data: posts, total: jobPostCountRows[0].total_count };
     } catch (error) {
       return { ok: false, error: (error as Error).message };
     }

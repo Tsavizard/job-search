@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import type { JobPostEventsService } from '../lib/kafka/job-post-events.service';
 import type { JobPostDatabase } from './job-post.database';
 import { JobPostDto } from './job-post.dto';
 import { JobPost } from './job-post.entity';
@@ -33,12 +34,22 @@ describe('JobPostService', () => {
       delete: jest.fn(),
     } as unknown as jest.Mocked<JobPostDatabase>;
 
+    const mockKafka = {
+      emitCreated: jest.fn(),
+      emitUpdated: jest.fn(),
+      emitDeleted: jest.fn(),
+    } as unknown as JobPostEventsService;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: JobPostService,
           useFactory: () =>
-            new JobPostService(mockDb, mockLogger as unknown as Logger),
+            new JobPostService(
+              mockDb,
+              mockLogger as unknown as Logger,
+              mockKafka
+            ),
         },
       ],
     }).compile();
@@ -52,9 +63,19 @@ describe('JobPostService', () => {
 
   describe('listJobPosts', () => {
     it('should return array of job posts on success', async () => {
-      mockDb.findAll.mockResolvedValue({ ok: true, data: [mockJobPost] });
-      const result = await service.listJobPosts({ userId });
-      expect(result).toEqual([mockJobPostDto]);
+      mockDb.findAll.mockResolvedValue({
+        ok: true,
+        data: [mockJobPost],
+        total: 1,
+      });
+      const result = await service.listJobPosts({ userId, page: 1, limit: 10 });
+      expect(result.data).toStrictEqual([mockJobPostDto]);
+      expect(result.meta).toStrictEqual({
+        limit: 10,
+        page: 1,
+        total: 1,
+        totalPages: 1,
+      });
     });
 
     it('should return empty array on error', async () => {
@@ -62,8 +83,11 @@ describe('JobPostService', () => {
         ok: false,
         error: new Error('DB Error').message,
       });
-      const result = await service.listJobPosts({ userId });
-      expect(result).toEqual([]);
+      const result = await service.listJobPosts({ userId, page: 1, limit: 10 });
+      expect(result).toStrictEqual({
+        data: [],
+        meta: { limit: 10, page: 1, total: 0, totalPages: 0 },
+      });
     });
   });
 

@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JobPostEventsService } from '../lib/kafka/job-post-events.service';
+import type { PaginatedResponse } from '../types';
 import { JobPostDatabase } from './job-post.database';
 import { JobPostDto } from './job-post.dto';
 import { JobPost, type TWorkModel } from './job-post.entity';
@@ -14,12 +15,33 @@ export class JobPostService {
 
   async listJobPosts({
     userId,
-  }: TFindManyJobPostsQuery): Promise<JobPostDto[]> {
-    const res = await this.db.findAll(userId);
-    if (res.ok) return res.data.map((post) => JobPostDto.from(post));
+    page,
+    limit,
+  }: TFindManyJobPostsQuery): Promise<PaginatedResponse<JobPostDto>> {
+    const res = await this.db.findAll(userId, page, limit);
+    if (res.ok) {
+      const { data, total } = res;
+      return {
+        data: data.map((post) => JobPostDto.from(post)),
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages: Math.ceil(total / limit),
+        },
+      };
+    }
 
     this.logger.error({ error: res.error, userId });
-    return [];
+    return {
+      data: [],
+      meta: {
+        total: 0,
+        page,
+        limit,
+        totalPages: 0,
+      },
+    };
   }
 
   async getJobPost({
@@ -90,9 +112,10 @@ export class JobPostService {
   }
 }
 
-type TFindManyJobPostsQuery = { userId: string };
+type TFindManyJobPostsQuery = { page: number; limit: number; userId: string };
 type TFindOneJobPostQuery = {
   id: string;
+
   userId: string;
 };
 

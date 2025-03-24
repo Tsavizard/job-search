@@ -1,5 +1,6 @@
 import type { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import type { JobPostEventsService } from '../lib/kafka/job-post-events.service';
 import {
   JobPostController,
   type TCreatePostParams,
@@ -43,6 +44,12 @@ describe('JobPostController', () => {
     error: jest.fn(),
   } as unknown as Logger;
 
+  const mockKafka = {
+    emitCreated: jest.fn(),
+    emitUpdated: jest.fn(),
+    emitDeleted: jest.fn(),
+  } as unknown as JobPostEventsService;
+
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
@@ -50,7 +57,8 @@ describe('JobPostController', () => {
       providers: [
         {
           provide: JobPostService,
-          useFactory: () => new JobPostService(mockJobPostDatabase, mockLogger),
+          useFactory: () =>
+            new JobPostService(mockJobPostDatabase, mockLogger, mockKafka),
         },
       ],
     }).compile();
@@ -62,9 +70,13 @@ describe('JobPostController', () => {
       mockJobPostDatabase.findAll.mockResolvedValue({
         ok: true,
         data: [],
+        total: 0,
       });
-      const result = await controller.index({ userId: 'user1' });
-      expect(result).toEqual([]);
+      const result = await controller.index({ userId: 'user1' }, 1, 100);
+      expect(result).toEqual({
+        data: [],
+        meta: { limit: 100, page: 1, total: 0, totalPages: 0 },
+      });
     });
 
     it('should return multiple job posts', async () => {
@@ -72,10 +84,17 @@ describe('JobPostController', () => {
       mockJobPostDatabase.findAll.mockResolvedValue({
         ok: true,
         data: mockPosts,
+        total: 1,
       });
-      const result = await controller.index({ userId: 'user1' });
-      expect(result).toEqual([mockJobPostDto, mockJobPostDto2]);
-      expect(result).toHaveLength(2);
+      const result = await controller.index({ userId: 'user1' }, 1, 100);
+      expect(result.data).toEqual([mockJobPostDto, mockJobPostDto2]);
+      expect(result.data).toHaveLength(2);
+      expect(result.meta).toStrictEqual({
+        limit: 100,
+        page: 1,
+        total: 1,
+        totalPages: 1,
+      });
     });
   });
 

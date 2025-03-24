@@ -4,6 +4,7 @@ import {
   type RowDataPacket,
 } from 'mysql2/promise';
 import type {
+  DbPaginatedQuerySuccessResult,
   DbQueryErrorResult,
   DbQuerySuccessResult,
 } from '../types/database';
@@ -38,15 +39,22 @@ describe('JobPostDatabase', () => {
           },
         },
       ];
-      mockConnection.execute.mockResolvedValueOnce([mockRows, []]);
+      mockConnection.execute
+        .mockResolvedValueOnce([mockRows, []])
+        .mockResolvedValueOnce([[{ total_count: 1 }] as RowDataPacket[], []]);
 
       const result = await jobPostDb.findAll('user1');
-
       expect(result.ok).toBe(true);
-      expect((result as DbQuerySuccessResult<JobPost[]>).data).toHaveLength(1);
       expect(
-        (result as DbQuerySuccessResult<JobPost[]>).data?.[0]
+        (result as DbPaginatedQuerySuccessResult<JobPost[]>).data
+      ).toHaveLength(1);
+      expect(
+        (result as DbPaginatedQuerySuccessResult<JobPost[]>).data?.[0]
       ).toBeInstanceOf(JobPost);
+
+      expect(
+        (result as DbPaginatedQuerySuccessResult<JobPost[]>).total
+      ).toEqual(1);
       expect(mockConnection.execute).toHaveBeenCalledWith(expect.any(String), [
         'user1',
       ]);
