@@ -1,0 +1,138 @@
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import type { ElasticsearchService as Elastic } from '@nestjs/elasticsearch';
+
+@Injectable()
+export class ElasticSearchService<T extends DocumentData> {
+  constructor(
+    private readonly es: Elastic,
+    @Inject(Logger) private readonly logger: Logger
+  ) {}
+
+  async search(
+    index: string,
+    query: Record<string, unknown>,
+    page: number,
+    pageSize: number
+  ): Promise<SearchResponse<T>> {
+    try {
+      const from = (page - 1) * pageSize;
+      const res = await this.es.search<T>({
+        index,
+        body: { query, from, size: pageSize },
+      });
+
+      const data = res.hits.hits.map((hit) => ({
+        id: hit._id as string,
+        ...hit._source,
+      })) as T[];
+      const { total } = res.hits;
+
+      return {
+        ok: true,
+        data,
+        page,
+        pageSize,
+        pageCount: Math.ceil((total as number) / pageSize),
+        total: total as number,
+      };
+    } catch (error) {
+      this.logger.error('Error finding documents:', error);
+      return { ok: false, error: (error as Error).message };
+    }
+  }
+
+  async indexDocument(
+    index: string,
+    id: string,
+    body: Omit<T, 'id'>
+  ): Promise<OperationResult> {
+    try {
+      const response = await this.es.index({
+        index,
+        id,
+        body,
+      });
+
+      if (response.result === 'created' || response.result === 'updated') {
+        this.logger.debug('Document indexed successfully');
+      } else if (response.result === 'noop') {
+        this.logger.debug('No changes made, document already exists');
+      }
+      return { ok: true };
+    } catch (error) {
+      this.logger.error('Error indexing document:', error);
+      return { ok: false, error: (error as Error).message };
+    }
+  }
+
+  async deleteDocument(index: string, id: string): Promise<OperationResult> {
+    try {
+      const response = await this.es.delete({
+        index,
+        id,
+      });
+
+      if (response.result === 'deleted') {
+        this.logger.debug('Document deleted successfully');
+      } else if (response.result === 'not_found') {
+        this.logger.warn('Document not found');
+      }
+      return { ok: true };
+    } catch (error) {
+      this.logger.error('Error deleting document:', error);
+      return { ok: false, error: (error as Error).message };
+    }
+  }
+}
+
+export type OperationResult = { ok: true } | { ok: false; error: string };
+
+type DocumentData = {
+  id: string;
+  [key: string]: unknown;
+};
+
+type SearchResponse<T> =
+  | {
+      ok: true;
+      data: T[];
+      page: number;
+      pageSize: number;
+      pageCount: number;
+      total: number;
+    }
+  | { ok: false; error: string };
+// type SearchSuccess<T = Record<string, unknown>> = {
+//   _shards: {
+//     total: number;
+//     successful: number;
+//     skipped: number;
+//     failed: number;
+//   };
+//   hits: {
+//     total: {
+//       value: number;
+//       relation: 'eq';
+//     };
+//     max_score: number;
+//     hits: [
+//       {
+//         _index: string;
+//         _type: '_doc';
+//         _id: string;
+//         _score: number;
+//         _source: T;
+//       }
+//     ];
+//   };
+// };
+
+// type SearchError = {
+//   error: {
+//     type: string;
+//     reason: string;
+//     line: number;
+//     col: number;
+//   };
+//   status: number;
+// };
