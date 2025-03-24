@@ -27,7 +27,7 @@ import { ZodValidationPipe } from '../lib/ZodValidationPipe';
 import type { PaginatedResponse } from '../types';
 import type { JobPostDto } from './job-post.dto';
 import { type TWorkModel } from './job-post.entity';
-import { JobPostSchema, LimitSchema, PageSchema } from './job-post.schema';
+import { JobPostSchema, NumberSchema } from './job-post.schema';
 import { JobPostService } from './job-post.service';
 import {
   deleteSwagger,
@@ -40,8 +40,7 @@ import {
 const jobPostBodyValidationPipeline = new ZodValidationPipe<TCreatePostParams>(
   JobPostSchema
 );
-const pageValidator = new ZodValidationPipe(PageSchema);
-const limitValidator = new ZodValidationPipe(LimitSchema);
+const numericValidation = new ZodValidationPipe(NumberSchema);
 
 @ApiTags('Job Posts')
 @ApiBearerAuth()
@@ -56,9 +55,9 @@ export class JobPostController {
   @ApiQuery({ name: 'limit', required: false, type: Number })
   async index(
     @Req() { userId }: Request,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe, pageValidator)
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe, numericValidation)
     page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe, limitValidator)
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe, numericValidation)
     limit: number
   ): Promise<PaginatedResponse<JobPostDto>> {
     return await this.jobPostService.listJobPosts({

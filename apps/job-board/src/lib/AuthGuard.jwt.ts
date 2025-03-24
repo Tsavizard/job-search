@@ -15,7 +15,7 @@ export class AuthGuardJWT implements CanActivate {
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const [authType, token] = request.headers.authorization?.split(' ') ?? []; // Header named 'Authorization'
+    const [authType, token] = request.headers.authorization?.split(' ') ?? [];
     if (authType !== 'Bearer' || !token) throw new UnauthorizedException();
 
     // TODO: decode token and get userId.
