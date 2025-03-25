@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import type { JobPostEventsProducer } from '../lib/kafka/job-post-events.producer';
+import type { JobPostEventsProducer } from './job-post-events.producer';
 import type { JobPostDatabase } from './job-post.database';
 import { JobPostDto } from './job-post.dto';
 import { JobPost } from './job-post.entity';

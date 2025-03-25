@@ -9,13 +9,13 @@
         "options": {
           "command": "webpack-cli build",
           "args": [
-            "node-env=development"
+            "node-env=production"
           ]
         },
         "configurations": {
-          "production": {
+          "development": {
             "args": [
-              "node-env=production"
+              "node-env=development"
             ]
           }
         }

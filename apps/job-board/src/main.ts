@@ -4,7 +4,6 @@
  */
 
 import fastifyCookie from '@fastify/cookie';
-import fastifyStatic from '@fastify/static';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport, type MicroserviceOptions } from '@nestjs/microservices';
@@ -13,10 +12,29 @@ import {
   type NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { join } from 'path';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
+  const globalPrefix = 'api';
+
+  const app = await ConfigureServer(globalPrefix);
+  ConfigureSwagger(app);
+  ConfigureKafka(app);
+  const port = process.env.PORT || 3000;
+
+  await app.startAllMicroservices();
+  await app.listen(port);
+
+  Logger.log(
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
+  );
+}
+
+bootstrap();
+
+async function ConfigureServer(
+  globalPrefix: string
+): Promise<NestFastifyApplication> {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
@@ -25,28 +43,17 @@ async function bootstrap() {
     }
   );
 
-  const server = app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: 'job-board',
-        brokers: ['localhost:9092'],
-      },
-      producer: {
-        allowAutoTopicCreation: true,
-      },
-      consumer: {
-        groupId: 'job-board-consumer',
-      },
-      // subscribe: {
-      //   fromBeginning: true,
-      // },
-    },
-  });
-  server.status.subscribe((status: string) => {
-    Logger.debug(status);
-  });
+  await app.register(
+    fastifyCookie,
+    { secret: 'fooBar' } // Add a secret key for signed cookies
+  );
 
+  app.setGlobalPrefix(globalPrefix);
+
+  return app;
+}
+
+function ConfigureSwagger(app: NestFastifyApplication) {
   const config = new DocumentBuilder()
     .setTitle('Job Board API')
     .setDescription('The job board API description')
@@ -64,24 +71,28 @@ async function bootstrap() {
   SwaggerModule.setup('api/swagger', app, documentFactory, {
     jsonDocumentUrl: 'api/swagger-json',
   });
-
-  await app.register(
-    fastifyCookie,
-    { secret: 'fooBar' } // Add a secret key for signed cookies
-  );
-  await app.register(fastifyStatic, {
-    root: join(__dirname, '..', 'public'),
-    prefix: '/public/',
-  });
-
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  const port = process.env.PORT || 3000;
-  await app.startAllMicroservices();
-  await app.listen(port);
-  Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  );
 }
 
-bootstrap();
+function ConfigureKafka(app: NestFastifyApplication) {
+  const kafkaServer = app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: 'job-board',
+        brokers: ['localhost:9092'],
+      },
+      producer: {
+        allowAutoTopicCreation: false,
+      },
+      consumer: {
+        groupId: 'job-board-consumer',
+      },
+      subscribe: {
+        fromBeginning: true,
+      },
+    },
+  });
+  kafkaServer.status.subscribe((status: string) => {
+    Logger.debug(status);
+  });
+}

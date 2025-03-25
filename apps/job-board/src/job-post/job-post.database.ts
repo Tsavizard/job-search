@@ -6,7 +6,7 @@ import type {
 } from 'mysql2/promise';
 import assert from 'node:assert';
 import { v4 as uuid } from 'uuid';
-import { DATABASE_CONNECTION } from '../lib/Database';
+import { DATABASE_CONNECTION } from '../lib/database.module';
 import type {
   DbCommandResult,
   DbPaginatedQueryResult,

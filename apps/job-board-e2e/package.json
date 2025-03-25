@@ -11,8 +11,8 @@
         "executor": "nx:run-commands",
         "options": {
           "commands": [
-            "docker exec -i karriera-job-board-db mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-board < docker/mysql/utils/clear-job-posts.sql",
-            "docker exec -i karriera-job-board-db mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-board < docker/mysql/init/2025-03-22-seed-job-posts-table.sql"
+            "docker exec -i karriera-job-board-db mysql -u $MYSQL_USER -p$MYSQL_PASSWORD job-board < docker/mysql/utils/clear-job-posts.sql",
+            "docker exec -i karriera-job-board-db mysql -u $MYSQL_USER -p$MYSQL_PASSWORD job-board < docker/mysql/init/2025-03-22-seed-job-posts-table.sql"
           ],
           "envFile": "envs/.env.mysql.development",
           "parallel": false

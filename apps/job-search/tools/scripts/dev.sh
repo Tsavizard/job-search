@@ -1,5 +1,5 @@
 #!/bin/bash
 
-docker compose -f 'docker/docker-compose.dev.yml' down elasticsearch
+docker compose -f 'docker/docker-compose.dev.yml' down elasticsearch-job-search
 docker volume prune -f
-docker compose -f 'docker/docker-compose.dev.yml' up -d --build elasticsearch
+docker compose -f 'docker/docker-compose.dev.yml' up -d --build elasticsearch-job-search

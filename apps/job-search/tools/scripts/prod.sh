@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker compose -f 'docker/docker-compose.prod.yml' down elasticsearch
-docker compose -f 'docker/docker-compose.prod.yml' up -d --build elasticsearch
+docker compose -f 'docker/docker-compose.dev.yml' down elasticsearch-job-search
+docker compose -f 'docker/docker-compose.dev.yml' up -d --build elasticsearch-job-search
