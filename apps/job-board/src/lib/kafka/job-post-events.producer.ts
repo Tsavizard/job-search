@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JobPostDto } from '../../job-post/job-post.dto';
-import { KafkaProducerService } from './kafka.producer.service';
+import { KafkaClient } from './kafka.client';
 
 @Injectable()
-export class JobPostEventsService {
-  private readonly logger = new Logger(JobPostEventsService.name);
+export class JobPostEventsProducer {
+  private readonly logger = new Logger(JobPostEventsProducer.name);
 
-  constructor(private readonly kafkaProducer: KafkaProducerService) {}
+  constructor(private readonly client: KafkaClient) {}
 
   async emitCreated(jobPost: JobPostDto) {
     try {
-      const res = await this.kafkaProducer.producer.send({
+      const res = await this.client.producer.send({
         topic: 'job-posts.created',
         messages: [
           {
@@ -34,7 +34,7 @@ export class JobPostEventsService {
   async emitUpdated(jobPost: JobPostDto) {
     try {
       this.logger.debug(`Emitting job.updated event for job ${jobPost.id}`);
-      await this.kafkaProducer.emit('job-posts.updated', {
+      await this.client.emit('job-posts.updated', {
         key: jobPost.id,
         value: jobPost,
       });
@@ -49,7 +49,7 @@ export class JobPostEventsService {
   async emitDeleted(id: string) {
     try {
       this.logger.debug(`Emitting job.deleted event for job ${id}`);
-      await this.kafkaProducer.emit('job-posts.deleted', {
+      await this.client.emit('job-posts.deleted', {
         key: id,
         value: { id },
       });

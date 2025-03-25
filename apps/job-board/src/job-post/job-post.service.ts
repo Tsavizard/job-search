@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { JobPostEventsService } from '../lib/kafka/job-post-events.service';
+import { JobPostEventsProducer } from '../lib/kafka/job-post-events.producer';
 import type { PaginatedResponse } from '../types';
 import { JobPostDatabase } from './job-post.database';
 import { JobPostDto } from './job-post.dto';
@@ -10,7 +10,7 @@ export class JobPostService {
   constructor(
     private readonly db: JobPostDatabase,
     @Inject(Logger) private readonly logger: Logger,
-    private readonly eventsService: JobPostEventsService
+    private readonly eventsService: JobPostEventsProducer
   ) {}
 
   async listJobPosts({

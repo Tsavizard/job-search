@@ -1,14 +1,14 @@
 import { HttpModule } from '@nestjs/axios';
 import { Logger, Module } from '@nestjs/common';
 import { JobPostEventsConsumer } from './job-post-events.consumer';
-import { JobPostEventsService } from './job-post-events.service';
-import { KafkaProducerService } from './kafka.producer.service';
+import { JobPostEventsProducer } from './job-post-events.producer';
+import { KafkaClient } from './kafka.client';
 
 @Module({
   imports: [HttpModule],
   providers: [
-    KafkaProducerService,
-    JobPostEventsService,
+    KafkaClient,
+    JobPostEventsProducer,
     {
       provide: Logger,
       useFactory: () => {
@@ -17,6 +17,6 @@ import { KafkaProducerService } from './kafka.producer.service';
     },
   ],
   controllers: [JobPostEventsConsumer],
-  exports: [JobPostEventsService],
+  exports: [JobPostEventsProducer],
 })
 export class KafkaModule {}

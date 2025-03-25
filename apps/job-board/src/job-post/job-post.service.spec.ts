@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import type { JobPostEventsService } from '../lib/kafka/job-post-events.service';
+import type { JobPostEventsProducer } from '../lib/kafka/job-post-events.producer';
 import type { JobPostDatabase } from './job-post.database';
 import { JobPostDto } from './job-post.dto';
 import { JobPost } from './job-post.entity';
@@ -38,7 +38,7 @@ describe('JobPostService', () => {
       emitCreated: jest.fn(),
       emitUpdated: jest.fn(),
       emitDeleted: jest.fn(),
-    } as unknown as JobPostEventsService;
+    } as unknown as JobPostEventsProducer;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [

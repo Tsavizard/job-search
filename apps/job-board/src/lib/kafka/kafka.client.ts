@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
-export class KafkaProducerService extends ClientKafka implements OnModuleInit {
+export class KafkaClient extends ClientKafka implements OnModuleInit {
   producerTopics: string[];
   constructor() {
     super({});

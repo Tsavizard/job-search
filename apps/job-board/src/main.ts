@@ -37,12 +37,6 @@ async function bootstrap() {
       },
       consumer: {
         groupId: 'job-board-consumer',
-        rebalanceTimeout: 60000,
-        heartbeatInterval: 15000,
-        retry: {
-          initialRetryTime: 10000,
-          maxRetryTime: 60000,
-        },
       },
       // subscribe: {
       //   fromBeginning: true,
