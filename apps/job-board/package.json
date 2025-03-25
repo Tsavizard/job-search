@@ -9,13 +9,13 @@
         "options": {
           "command": "webpack-cli build",
           "args": [
-            "node-env=production"
+            "node-env=development"
           ]
         },
         "configurations": {
-          "development": {
+          "production": {
             "args": [
-              "node-env=development"
+              "node-env=production"
             ]
           }
         }
@@ -26,8 +26,14 @@
           "commands": [
             "apps/job-board/tools/scripts/dev.sh"
           ],
-          "envFile": "apps/job-board/envs/.env.development",
           "parallel": false
+        },
+        "configurations": {
+          "production": {
+            "commands": [
+              "apps/job-board/tools/scripts/prod.sh"
+            ]
+          }
         }
       },
       "serve": {
@@ -35,7 +41,11 @@
         "defaultConfiguration": "development",
         "dependsOn": [
           "build",
-          "start-docker"
+          {
+            "target": "start-docker",
+            "projects": "self",
+            "params": "forward"
+          }
         ],
         "options": {
           "buildTarget": "@karriera-test/job-board:build",
@@ -59,7 +69,7 @@
         "dependsOn": [
           "build"
         ],
-        "command": "docker build -f apps/job-board/Dockerfile . -t job-board"
+        "command": "docker build -f docker/job-board.Dockerfile . -t job-board"
       }
     }
   }

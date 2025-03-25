@@ -7,6 +7,17 @@
       "@karriera-test/job-search"
     ],
     "targets": {
+      "pre-e2e": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "docker exec -i karriera-job-search-elastic mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-search < docker/elastic/truncate.sh",
+            "docker exec -i karriera-job-search-elastic mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-search < docker/elastic/seed.sh"
+          ],
+          "envFile": "envs/.env.elastic.development",
+          "parallel": false
+        }
+      },
       "e2e": {
         "executor": "@nx/jest:jest",
         "outputs": [

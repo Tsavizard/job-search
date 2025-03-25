@@ -1,0 +1,101 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: karriera-db
+    restart: always
+    env_file:
+      - ../envs/.env.mysql.development
+    ports:
+      - '${MYSQL_PORT:-3306}:3306'
+    volumes:
+      - mysql_data-dev:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: karriera-kafka
+    ports:
+      - '9092:9092'
+    env_file:
+      - ../envs/.env.kafka.development
+    tmpfs:
+      - /tmp/kafka-logs-dev
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'kafka-topics --bootstrap-server localhost:9092 --list']
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: karriera-zookeeper
+    ports:
+      - '2181:2181'
+    env_file:
+      - ../envs/.env.kafka.development
+    volumes:
+      - zookeeper_data-dev:/var/lib/zookeeper/data
+    healthcheck:
+      test: echo stat | nc localhost 2181
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false # Disable security (use only for local dev)
+    env_file:
+      - ../envs/.env.elastic.development
+    volumes:
+      - elasticsearch-data-dev:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+  job-board:
+    build:
+      dockerfile: job-board.Dockerfile
+    container_name: karriera-job-board-dev
+    restart: always
+    env_file:
+      - ../envs/.env.mysql.development
+      - ../envs/.env.kafka.development
+    ports:
+      - '${PORT:-3000}:3000'
+    volumes:
+      - ../:/app
+      - /app/node_modules
+    depends_on:
+      - mysql
+      - kafka
+
+  job-search:
+    build:
+      context: ..
+      dockerfile: job-search.Dockerfile
+    container_name: karriera-job-search-dev
+    restart: always
+    env_file:
+      - ../envs/.env.elastic.development
+    ports:
+      - '${PORT:-3001}:3001'
+    volumes:
+      - ../:/app
+      - /app/node_modules
+    depends_on:
+      - elasticsearch
+
+volumes:
+  mysql_data-dev:
+  zookeeper_data-dev:
+  elasticsearch-data-dev:
+    driver: local

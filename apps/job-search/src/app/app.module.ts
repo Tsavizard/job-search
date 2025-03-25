@@ -8,9 +8,7 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/apps/job-search/envs/.env.${
-        process.env.NODE_ENV
-      }`,
+      envFilePath: `${process.cwd()}/envs/.env.elastic.${process.env.NODE_ENV}`,
     }),
     ElasticSearchModule,
     JobPostModule,

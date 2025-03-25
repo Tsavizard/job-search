@@ -20,11 +20,22 @@
           }
         }
       },
+      "start-docker": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "apps/job-search/tools/scripts/dev.sh"
+          ],
+          "envFile": "apps/job-search/envs/.env.development",
+          "parallel": false
+        }
+      },
       "serve": {
         "executor": "@nx/js:node",
         "defaultConfiguration": "development",
         "dependsOn": [
-          "build"
+          "build",
+          "start-docker"
         ],
         "options": {
           "buildTarget": "@karriera-test/job-search:build",
@@ -48,7 +59,7 @@
         "dependsOn": [
           "build"
         ],
-        "command": "docker build -f apps/job-board/Dockerfile . -t job-board"
+        "command": "docker build -f docker/job-search.Dockerfile . -t job-search"
       }
     }
   }

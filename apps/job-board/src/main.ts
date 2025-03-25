@@ -31,18 +31,22 @@ async function bootstrap() {
       client: {
         clientId: 'job-board',
         brokers: ['localhost:9092'],
-        retry: {
-          initialRetryTime: 100,
-          retries: 8,
-          maxRetryTime: 30000,
-        },
+      },
+      producer: {
+        allowAutoTopicCreation: true,
       },
       consumer: {
         groupId: 'job-board-consumer',
+        rebalanceTimeout: 60000,
+        heartbeatInterval: 15000,
+        retry: {
+          initialRetryTime: 10000,
+          maxRetryTime: 60000,
+        },
       },
-      subscribe: {
-        fromBeginning: true,
-      },
+      // subscribe: {
+      //   fromBeginning: true,
+      // },
     },
   });
   server.status.subscribe((status: string) => {
