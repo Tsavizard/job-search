@@ -14,7 +14,7 @@ describe('JobPostRpcController', () => {
     description: 'Test description',
     salary: 50000,
     workModel: 'on-site',
-    userId: 'user1',
+    userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
   };
 
   const mockES = {

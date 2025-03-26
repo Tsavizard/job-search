@@ -26,12 +26,12 @@ describe('JobPostDatabase', () => {
     it('should return all job posts for a user', async () => {
       const mockRows: RowDataPacket[] = [
         {
-          id: '1',
+          id: '9495b509-1fa6-479a-ab28-3f706474a313',
           title: 'Developer',
           description: 'Coding job',
           salary: 1000,
           work_model: 'on-site',
-          userId: 'user1',
+          userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
           createdAt: new Date().toISOString(),
           update: new Date().toISOString(),
           constructor: {
@@ -64,26 +64,29 @@ describe('JobPostDatabase', () => {
   describe('findById', () => {
     it('should return a job post by id', async () => {
       const mockRow: RowDataPacket = {
-        id: '1',
+        id: '9495b509-1fa6-479a-ab28-3f706474a313',
         title: 'Developer',
         description: 'Coding job',
         salary: 1000,
         work_model: 'on-site',
-        userId: 'user1',
+        userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
         createdAt: new Date(),
         update: new Date(),
         constructor: { name: 'RowDataPacket' },
       };
       mockConnection.execute.mockResolvedValueOnce([[mockRow], []]);
 
-      const result = await jobPostDb.findById('1', 'user1');
+      const result = await jobPostDb.findById(
+        '9495b509-1fa6-479a-ab28-3f706474a313',
+        'user1'
+      );
 
       expect(result.ok).toBe(true);
       expect((result as DbQuerySuccessResult<JobPost>).data).toBeInstanceOf(
         JobPost
       );
       expect(mockConnection.execute).toHaveBeenCalledWith(expect.any(String), [
-        '1',
+        '9495b509-1fa6-479a-ab28-3f706474a313',
         'user1',
       ]);
     });
@@ -91,7 +94,10 @@ describe('JobPostDatabase', () => {
     it('should return ok false if job post not found', async () => {
       mockConnection.execute.mockResolvedValueOnce([[], []]);
 
-      const result = await jobPostDb.findById('1', 'user1');
+      const result = await jobPostDb.findById(
+        '9495b509-1fa6-479a-ab28-3f706474a313',
+        'user1'
+      );
 
       expect(result.ok).toBe(false);
       expect((result as DbQuerySuccessResult<JobPost>).data).toBeUndefined();
@@ -106,7 +112,7 @@ describe('JobPostDatabase', () => {
         description: 'Coding job',
         salary: 1000,
         workModel: 'on-site',
-        userId: 'user1',
+        userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
       });
       mockConnection.execute.mockResolvedValueOnce([
         { affectedRows: 1 } as ResultSetHeader,
@@ -130,12 +136,12 @@ describe('JobPostDatabase', () => {
   describe('update', () => {
     it('should update an existing job post', async () => {
       const jobPost = new JobPost({
-        id: '1',
+        id: '9495b509-1fa6-479a-ab28-3f706474a313',
         title: 'Senior Developer',
         description: 'Updated job',
         salary: 2000,
         workModel: 'on-site',
-        userId: 'user1',
+        userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
       });
       mockConnection.execute.mockResolvedValueOnce([
         { affectedRows: 1 } as ResultSetHeader,
@@ -163,11 +169,14 @@ describe('JobPostDatabase', () => {
         [],
       ]);
 
-      const result = await jobPostDb.delete('1', 'user1');
+      const result = await jobPostDb.delete(
+        '9495b509-1fa6-479a-ab28-3f706474a313',
+        'user1'
+      );
 
       expect(result.ok).toBe(true);
       expect(mockConnection.execute).toHaveBeenCalledWith(expect.any(String), [
-        '1',
+        '9495b509-1fa6-479a-ab28-3f706474a313',
         'user1',
       ]);
     });
@@ -178,7 +187,10 @@ describe('JobPostDatabase', () => {
         [],
       ]);
 
-      const result = await jobPostDb.delete('1', 'user1');
+      const result = await jobPostDb.delete(
+        '9495b509-1fa6-479a-ab28-3f706474a313',
+        'user1'
+      );
 
       expect(result.ok).toBe(false);
       expect(result.error).toBe('Job post not found');

@@ -14,7 +14,7 @@ describe('JobPostApiController', () => {
     description: 'Test description',
     salary: 50000,
     workModel: 'on-site',
-    userId: 'user1',
+    userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
   };
   const mockJobPost2: JobPost = {
     id: '2',
@@ -22,7 +22,7 @@ describe('JobPostApiController', () => {
     description: 'Test description',
     salary: 80000,
     workModel: 'remote',
-    userId: 'user1',
+    userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
   };
 
   const mockES = {

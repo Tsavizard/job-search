@@ -4,7 +4,7 @@ describe('Job Posts API', () => {
   let authToken: string;
 
   beforeAll(async () => {
-    authToken = '1';
+    '3f2ecdea-02fe-48e1-bf7b-89ec6d028823';
   });
 
   describe('GET /api/job-posts', () => {

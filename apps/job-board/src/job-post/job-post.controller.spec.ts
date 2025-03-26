@@ -22,21 +22,21 @@ describe('JobPostController', () => {
   } as unknown as jest.Mocked<JobPostDatabase>;
 
   const mockJobPost = new JobPost({
-    id: '1',
+    id: '9495b509-1fa6-479a-ab28-3f706474a313',
     title: 'Software Engineer',
     description: 'Test description',
     salary: 50000,
     workModel: 'on-site',
-    userId: 'user1',
+    userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
   });
   const mockJobPostDto = JobPostDto.from(mockJobPost);
   const mockJobPost2 = new JobPost({
-    id: '2',
+    id: '9495b509-1fa6-479a-ab28-3f706474a314',
     title: 'Software Engineer',
     description: 'Test description',
     salary: 50000,
     workModel: 'on-site',
-    userId: 'user1',
+    userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
   });
   const mockJobPostDto2 = JobPostDto.from(mockJobPost2);
 
@@ -72,7 +72,11 @@ describe('JobPostController', () => {
         data: [],
         total: 0,
       });
-      const result = await controller.index({ userId: 'user1' }, 1, 100);
+      const result = await controller.index(
+        { userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' },
+        1,
+        100
+      );
       expect(result).toEqual({
         data: [],
         meta: { limit: 100, page: 1, total: 0, totalPages: 0 },
@@ -86,7 +90,11 @@ describe('JobPostController', () => {
         data: mockPosts,
         total: 1,
       });
-      const result = await controller.index({ userId: 'user1' }, 1, 100);
+      const result = await controller.index(
+        { userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' },
+        1,
+        100
+      );
       expect(result.data).toEqual([mockJobPostDto, mockJobPostDto2]);
       expect(result.data).toHaveLength(2);
       expect(result.meta).toStrictEqual({
@@ -104,7 +112,12 @@ describe('JobPostController', () => {
         ok: true,
         data: mockJobPost,
       });
-      const result = await controller.show('1', { userId: 'user1' });
+      const result = await controller.show(
+        '9495b509-1fa6-479a-ab28-3f706474a313',
+        {
+          userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
+        }
+      );
       expect(result).toEqual(mockJobPostDto);
     });
 
@@ -114,7 +127,9 @@ describe('JobPostController', () => {
         error: 'Job post not found',
       });
       await expect(
-        controller.show('999', { userId: 'user1' })
+        controller.show('9495b509-1fa6-479a-ab28-3f706474a318', {
+          userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
+        })
       ).rejects.toThrow();
     });
   });
@@ -130,16 +145,19 @@ describe('JobPostController', () => {
 
       mockJobPostDatabase.create.mockResolvedValue({
         ok: true,
-        id: '3',
+        id: '9495b509-1fa6-479a-ab28-3f706474a319',
       });
-      const result = await controller.create({ userId: 'user1' }, createParams);
+      const result = await controller.create(
+        { userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' },
+        createParams
+      );
       expect(result).not.toBeNull();
-      expect(result?.id).toBe('3');
+      expect(result?.id).toBe('9495b509-1fa6-479a-ab28-3f706474a319');
       expect(result?.title).toBe(createParams.title);
       expect(result?.description).toBe(createParams.description);
       expect(result?.salary).toBe(createParams.salary);
       expect(result?.workModel).toBe(createParams.workModel);
-      expect(result?.userId).toBe('user1');
+      expect(result?.userId).toBe('3f2ecdea-02fe-48e1-bf7b-89ec6d028823');
     });
 
     it('should throw error when an error occurs', async () => {
@@ -149,7 +167,7 @@ describe('JobPostController', () => {
         error: 'Creation failed',
       });
       await expect(
-        controller.create({ userId: 'user1' }, {
+        controller.create({ userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' }, {
           title: 'New Job',
           description: 'Description',
           salary: 60000,
@@ -161,7 +179,7 @@ describe('JobPostController', () => {
     it('should throw error when an invalid payload is given', async () => {
       await expect(
         controller.create(
-          { userId: 'user1' },
+          { userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' },
           {
             // @ts-expect-error Testing invalid payload
             foo: 'bar',
@@ -175,12 +193,12 @@ describe('JobPostController', () => {
     it('should update an existing job post', async () => {
       mockJobPostDatabase.update.mockResolvedValue({
         ok: true,
-        id: '1',
+        id: '9495b509-1fa6-479a-ab28-3f706474a313',
       });
 
       const result = await controller.update(
-        '1',
-        { userId: 'user1' },
+        '9495b509-1fa6-479a-ab28-3f706474a313',
+        { userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' },
         {
           title: 'Updated Title',
           description: 'Description',
@@ -200,7 +218,7 @@ describe('JobPostController', () => {
       await expect(
         controller.update(
           '999',
-          { userId: 'user1' },
+          { userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' },
           {
             title: 'New Title',
             description: 'Description',
@@ -215,7 +233,7 @@ describe('JobPostController', () => {
       await expect(
         controller.update(
           '999',
-          { userId: 'user1' },
+          { userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823' },
           {
             title: 'New Title',
             description: 'Description',
@@ -232,10 +250,15 @@ describe('JobPostController', () => {
     it('should delete an existing job post', async () => {
       mockJobPostDatabase.delete.mockResolvedValue({
         ok: true,
-        id: '1',
+        id: '9495b509-1fa6-479a-ab28-3f706474a313',
       });
 
-      const result = await controller.remove('1', { userId: 'user1' });
+      const result = await controller.remove(
+        '9495b509-1fa6-479a-ab28-3f706474a313',
+        {
+          userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
+        }
+      );
       expect(result).toBeUndefined();
     });
 
@@ -246,7 +269,9 @@ describe('JobPostController', () => {
         error: 'Job post not found',
       });
       await expect(
-        controller.remove('999', { userId: 'user1' })
+        controller.remove('999', {
+          userId: '3f2ecdea-02fe-48e1-bf7b-89ec6d028823',
+        })
       ).rejects.toThrow();
     });
   });
