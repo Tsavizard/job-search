@@ -39,7 +39,7 @@ export function generateJobPostsQuery({
   if (models && models.length > 0) {
     filters.push({
       terms: {
-        workModel: models,
+        'workModel.keyword': models,
       },
     });
   }

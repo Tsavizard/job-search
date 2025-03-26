@@ -1,4 +1,4 @@
-import { TIndexSchema } from '../../../types/elastic'
+import { TIndexSchema } from '../../../types/elastic';
 
 export const jobPostIndexSchema: TIndexSchema = {
   index: 'job-posts', // TODO: extract to constants
