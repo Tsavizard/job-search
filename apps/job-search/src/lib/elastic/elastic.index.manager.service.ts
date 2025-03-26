@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { TIndexSchema } from '../../types/elastic';
-import { OperationResult } from './elastic.gateway.service';
+import { OperationResult, TIndexSchema } from '../../types/elastic';
 
 @Injectable()
 export class ElasticIndexManagerService {

@@ -9,7 +9,11 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/envs/.env.elastic.${process.env.NODE_ENV}`,
+      envFilePath: [
+        `${process.cwd()}/envs/.env.elastic.${process.env.NODE_ENV}`,
+        `${process.cwd()}/apps/job-search/envs/.env.${process.env.NODE_ENV}`,
+      ],
+      isGlobal: true,
     }),
     ThrottlerModule.forRoot({
       throttlers: [

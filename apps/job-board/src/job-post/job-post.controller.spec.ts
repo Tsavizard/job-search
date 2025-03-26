@@ -1,4 +1,5 @@
-import type { Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { JobPostEventsProducer } from './job-post-events.producer';
 import {
@@ -50,6 +51,15 @@ describe('JobPostController', () => {
     emitDeleted: jest.fn(),
   } as unknown as JobPostEventsProducer;
 
+  const mockConfigService = {
+    get: jest.fn((key: string) => {
+      const config = {
+        AUTH_SECRET: 'mockValue',
+      };
+      return config[key as keyof typeof config];
+    }),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
@@ -60,6 +70,7 @@ describe('JobPostController', () => {
           useFactory: () =>
             new JobPostService(mockJobPostDatabase, mockLogger, mockKafka),
         },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
     controller = module.get<JobPostController>(JobPostController);

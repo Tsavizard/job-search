@@ -1,4 +1,5 @@
 import type { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import type { ElasticGatewayService } from '../lib/elastic/elastic.gateway.service';
 import type { JobPost } from '../types';
@@ -27,6 +28,15 @@ describe('JobPostRpcController', () => {
     error: jest.fn(),
   } as unknown as Logger;
 
+  const mockConfigService = {
+    get: jest.fn((key: string) => {
+      const config = {
+        AUTH_SECRET: 'mockValue',
+      };
+      return config[key as keyof typeof config];
+    }),
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +46,7 @@ describe('JobPostRpcController', () => {
           provide: JobPostService,
           useFactory: () => new JobPostService(mockES, mockLogger),
         },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
     controller = module.get<JobPostRpcController>(JobPostRpcController);
