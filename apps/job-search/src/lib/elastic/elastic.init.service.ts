@@ -1,15 +1,15 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ElasticIndexManagerService } from './elastic.index.manager.service';
 import { schemas } from './schemas';
 
 @Injectable()
-export class ElasticInitService implements OnModuleInit {
+export class ElasticInitService implements OnApplicationBootstrap {
   constructor(
     private readonly indexManager: ElasticIndexManagerService,
     private readonly logger: Logger
   ) {}
 
-  async onModuleInit() {
+  async onApplicationBootstrap() {
     this.logger.log('Initializing Elasticsearch indices');
 
     const results = await Promise.all(

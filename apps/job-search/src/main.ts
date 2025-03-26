@@ -57,5 +57,3 @@ function ConfigureSwagger(app: NestFastifyApplication) {
     jsonDocumentUrl: '/swagger-json',
   });
 }
-
-bootstrap();
