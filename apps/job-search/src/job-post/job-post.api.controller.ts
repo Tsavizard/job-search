@@ -35,7 +35,7 @@ export class JobPostApiController {
     @Query(queryValidationPipe)
     query: Omit<TListQuery, 'models'> & { model?: TWorkModel[] }
   ): Promise<PaginatedResponse<JobPost>> {
-    const { search, salaryMax, salaryMin, model, page = 1, limit = 1 } = query;
+    const { search, salaryMax, salaryMin, model, page = 1, limit = 10 } = query;
     let models: TWorkModel[] | undefined = undefined;
     if (model) {
       models = Array.isArray(model) ? model : [model];
