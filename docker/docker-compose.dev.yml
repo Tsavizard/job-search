@@ -79,6 +79,11 @@ services:
     restart: always
     environment:
       - NODE_ENV=development
+      - MYSQL_HOST=mysql-job-board
+      - KAFKA_BROKER=kafka-job-board:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-job-board:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-job-board:29092,PLAINTEXT_HOST://kafka-job-board:9092
+      - HOST=0.0.0.0
     ports:
       - '${PORT:-3000}:3000'
     depends_on:
@@ -95,6 +100,8 @@ services:
     restart: always
     environment:
       - NODE_ENV=development
+      - ELASTICSEARCH_NODE=http://elasticsearch-job-search:9200
+      - HOST=0.0.0.0
     ports:
       - '${PORT:-3001}:3001'
     depends_on:

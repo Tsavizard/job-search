@@ -12,7 +12,7 @@ import { ElasticInitService } from './elastic.init.service';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        node: configService.get('ELASTICSEARCH_HOST') as string,
+        node: configService.get('ELASTICSEARCH_NODE') as string,
         auth: {
           username: configService.get('ELASTICSEARCH_USER') as string,
           password: configService.get('ELASTICSEARCH_PASSWORD') as string,
