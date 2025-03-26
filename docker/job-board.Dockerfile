@@ -13,7 +13,9 @@ WORKDIR /app
 
 RUN addgroup --system job-board && adduser --system -G job-board job-board
 
+COPY envs/ envs/
 COPY apps/job-board/dist job-board/
+COPY apps/job-board/envs/ apps/job-board/envs/
 RUN chown -R job-board:job-board .
 
 # You can remove this install step if you build with `--bundle` option.

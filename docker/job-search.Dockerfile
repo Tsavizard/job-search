@@ -13,7 +13,9 @@ WORKDIR /app
 
 RUN addgroup --system job-search && adduser --system -G job-search job-search
 
+COPY envs/ envs/
 COPY apps/job-search/dist job-search/
+
 RUN chown -R job-search:job-search .
 
 # You can remove this install step if you build with `--bundle` option.

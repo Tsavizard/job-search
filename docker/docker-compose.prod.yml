@@ -1,19 +1,24 @@
 services:
-  mysql:
+  mysql-job-board:
     image: mysql:8.4
-    container_name: karriera-db
+    container_name: karriera-job-board-db
     restart: always
     env_file:
       - ../envs/.env.mysql.production
     ports:
       - '${MYSQL_PORT:-3306}:3306'
+    healthcheck:
+      test: 'mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD'
+      interval: 10s
+      timeout: 5s
+      retries: 3
     volumes:
-      - mysql_data-prod:/var/lib/mysql
+      - mysql_data-job-board-prod:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
 
-  kafka:
+  kafka-job-board:
     image: confluentinc/cp-kafka:latest
-    container_name: karriera-kafka
+    container_name: karriera-kafka-job-board
     ports:
       - '9092:9092'
     env_file:
@@ -21,24 +26,24 @@ services:
     tmpfs:
       - /tmp/kafka-logs-prod
     depends_on:
-      zookeeper:
+      zookeeper-job-board:
         condition: service_healthy
     healthcheck:
       test:
         ['CMD-SHELL', 'kafka-topics --bootstrap-server localhost:9092 --list']
       interval: 5s
-      timeout: 10s
-      retries: 5
+      timeout: 5s
+      retries: 10
 
-  zookeeper:
+  zookeeper-job-board:
     image: confluentinc/cp-zookeeper:latest
-    container_name: karriera-zookeeper
+    container_name: karriera-zookeeper-job-board
     ports:
       - '2181:2181'
     env_file:
       - ../envs/.env.kafka.production
     volumes:
-      - zookeeper_data-prod:/var/lib/zookeeper/data
+      - zookeeper_data-job-board-prod:/var/lib/zookeeper/data
     healthcheck:
       test: echo stat | nc localhost 2181
       interval: 10s
@@ -46,55 +51,58 @@ services:
       retries: 3
       start_period: 20s
 
-  elasticsearch:
+  elasticsearch-job-search:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    container_name: elasticsearch
+    container_name: elasticsearch-job-search
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
       - discovery.type=single-node
+
     env_file:
       - ../envs/.env.elastic.production
     volumes:
-      - elasticsearch-data-prod:/usr/share/elasticsearch/data
+      - elasticsearch_data-job-search-prod:/usr/share/elasticsearch/data
     restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'http://localhost:9200/_cluster/health']
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   job-board:
     build:
       context: ..
-      dockerfile: job-board.Dockerfile
+      dockerfile: docker/job-board.Dockerfile
     container_name: karriera-job-board-prod
     restart: always
-    env_file:
-      - ../apps/job-board/envs/.env.production
+    environment:
+      - NODE_ENV=production
     ports:
       - '${PORT:-3000}:3000'
-    volumes:
-      - ../:/app
-      - /app/node_modules
     depends_on:
-      - mysql
-      - kafka
+      mysql-job-board:
+        condition: service_healthy
+      kafka-job-board:
+        condition: service_healthy
 
   job-search:
     build:
       context: ..
-      dockerfile: job-search.Dockerfile
+      dockerfile: docker/job-search.Dockerfile
     container_name: karriera-job-search-prod
     restart: always
-    env_file:
-      - ../apps/job-search/envs/.env.production
+    environment:
+      - NODE_ENV=production
     ports:
       - '${PORT:-3001}:3001'
-    volumes:
-      - ../:/app
-      - /app/node_modules
     depends_on:
-      - elasticsearch
+      elasticsearch-job-search:
+        condition: service_healthy
 
 volumes:
-  mysql_data-prod:
-  zookeeper_data-prod:
-  elasticsearch-data-prod:
+  mysql_data-job-board-prod:
+  zookeeper_data-job-board-prod:
+  elasticsearch_data-job-search-prod:
     driver: local
