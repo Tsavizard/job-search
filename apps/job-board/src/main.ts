@@ -1,8 +1,3 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
 import fastifyCookie from '@fastify/cookie';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -23,12 +18,12 @@ async function bootstrap() {
   ConfigureSwagger(app);
   ConfigureKafka(app);
   const port = process.env.PORT || 3000;
-
+  const host = process.env.HOST as string;
   await app.startAllMicroservices();
-  await app.listen(port, process.env.SERVER_HOST as string);
+  await app.listen(port, host);
 
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
+    `🚀 Application is running on: http://${host}:${port}/${globalPrefix}`
   );
 }
 
