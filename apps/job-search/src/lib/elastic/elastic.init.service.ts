@@ -19,8 +19,9 @@ export class ElasticInitService implements OnModuleInit {
     if (results.every((r) => r.ok)) {
       this.logger.log('Elasticsearch indices initialized successfully');
     } else {
-        const errors = results.filter((r) => !r.ok).map((r) => r.error);
+      const errors = results.filter((r) => !r.ok).map((r) => r.error);
       this.logger.error('Failed to initialize Elasticsearch indices', errors);
+      throw new Error('Failed to initialize Elasticsearch indices');
     }
   }
 }
