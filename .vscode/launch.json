@@ -17,6 +17,20 @@
             "outFiles": [
                 "${workspaceFolder}/apps/job-board/dist/**/*.js"
             ]
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Debug Job Search (Development)",
+            "port": 9229,
+            "restart": true,
+            "sourceMaps": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/apps/job-search/dist/**/*.js"
+            ]
         }
     ]
 }
