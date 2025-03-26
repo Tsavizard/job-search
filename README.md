@@ -69,6 +69,12 @@ Logging: bare minimum following tactic "no news is good news".
 
 - envs/ directory contains the env files for development/production for mysql, kafka, zookeeper, elasticsearch containers. Again mainly the hosts change from localhost to the container name but it is a good practice to have per NODE_ENV since normally the production one would be kept on server not in git
 
+## Future steps
+- Handle kafka consumer errors more gracefully. Default does exponential backoff and is vulnerable to poison pill.
+eg during testing I created via swagger a job post, then updated, then deleted. Each action has its own topic and because I had error in the update handler when I fixed it
+the topic resumed but the delete action had already happened so the update got pilled with 404.
+
+
 ## Examples
 
 Use Authorization: Bearer 3f2ecdea-02fe-48e1-bf7b-89ec6d028823.26dafafdd0de8ba46ebbdd02b1a67e04.7f7f9b79a8527b2b7c9a537f62258d2c4bf5583c82307b5199dd3eeabf66f7fb807b1614ed9b890d2a0130745d613f413ae7c05d5180764cc30c037789fba1e4
