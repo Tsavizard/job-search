@@ -58,4 +58,10 @@ Sanity checks:
   - Due to use of Kafka for event retention / retrial no extra checks were added.
 Throttling:
   - Used example from https://docs.nestjs.com/security/rate-limiting on both applications. Ideally this shouldn't be handled in the application but by firewall / proxy.
+Environment variables:
+  - apps/job-board/envs/.env.development apps/job-search/envs/.env.development
+    - Used in development, when apps are run without container. When running the apps in container use docker-compose-dev.yml where env vars needed for network are overridden
+
+  - envs/ directory contains the env files for development/production for mysql, kafka, zookeeper, elasticsearch containers. Again mainly the hosts change from localhost to the container name but it is a good practice to have per NODE_ENV since normally the production one would be kept on server not in git
+
 ## Examples
