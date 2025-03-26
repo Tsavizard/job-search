@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "generate-id": "node -e \"console.log(require('uuid').v4())\""
+    "generate-id": "node -e \"console.log(require('uuid').v4())\"",
+    "setup": "npx nx run-many -t build -p @karriera-test/job-board @karriera-test/job-search",
+    "serve-dockerized": "docker compose -f 'docker/docker-compose.prod.yml' up -d --build"
   },
   "private": true,
   "dependencies": {
@@ -60,5 +62,8 @@
   },
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=23.8.0"
+  }
 }
