@@ -66,7 +66,7 @@ services:
       - elasticsearch_data-job-search-prod:/usr/share/elasticsearch/data
     restart: unless-stopped
     healthcheck:
-      test: ['CMD-SHELL', 'http://localhost:9200/_cluster/health']
+      test: ['CMD-SHELL', 'curl http://localhost:9200/_cluster/health']
       interval: 5s
       timeout: 10s
       retries: 10
