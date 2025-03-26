@@ -9,6 +9,7 @@ export const listSchema = z
     page: z.coerce.number().min(1).safe().nonnegative(),
     limit: z.coerce.number().min(1).safe().nonnegative(),
   })
+  .partial()
   .strict();
 
 export const JobPostSchema = z

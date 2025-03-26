@@ -16,16 +16,16 @@ import { QueryDto } from './query.dto';
 
 const queryValidationPipe = new ZodValidationPipe(listSchema);
 
-@ApiTags('Job Posts')
 @ApiBearerAuth()
 @Controller('/api/job-posts')
 @UseGuards(AuthGuardJWT)
+@ApiTags('Job Posts Api')
 export class JobPostApiController {
   constructor(private readonly jobPostService: JobPostService) {}
 
   @Get()
   @ApiOperation(listSwagger)
-  @ApiQuery(QueryDto)
+  @ApiQuery({ type: QueryDto, explode: true })
   async list(
     @Query(queryValidationPipe) query: TListQuery
   ): Promise<PaginatedResponse<JobPost>> {
