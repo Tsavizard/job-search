@@ -57,5 +57,5 @@ Logging: bare minimum following tactic "no news is good news".
 Sanity checks:
   - Due to use of Kafka for event retention / retrial no extra checks were added.
 Throttling:
-  - Used example from https://docs.nestjs.com/security/rate-limiting on both applications
+  - Used example from https://docs.nestjs.com/security/rate-limiting on both applications. Ideally this shouldn't be handled in the application but by firewall / proxy.
 ## Examples

@@ -6,14 +6,12 @@
 # Run the container with `docker run -p 3000:3000 -t job-search`.
 FROM docker.io/node:lts-alpine
 
-ENV HOST=0.0.0.0
-ENV PORT=3001
-
 WORKDIR /app
 
 RUN addgroup --system job-search && adduser --system -G job-search job-search
 
 COPY envs/ envs/
+COPY apps/job-search/envs/ apps/job-search/envs/
 COPY apps/job-search/dist job-search/
 
 RUN chown -R job-search:job-search .
