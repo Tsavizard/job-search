@@ -1,10 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ElasticGatewayService } from '../lib/elastic/elastic.gateway.service';
 import type { JobPost, PaginatedResponse, TListQuery } from '../types';
+import { generateJobPostsQuery } from './job-post.list.query';
 
 @Injectable()
 export class JobPostService {
-  index = 'job-posts';
+  index = 'job-posts'; // TODO: use constants
 
   constructor(
     @Inject(ElasticGatewayService)
@@ -15,17 +16,15 @@ export class JobPostService {
   async listJobPosts({
     page = 1,
     limit = 1,
-    search,
     ...filters
   }: TListQuery): Promise<PaginatedResponse<JobPost>> {
     const res = await this.elasticSearchService.search(
       this.index,
-      {
-        search,
-        ...filters,
-      },
       page,
-      limit
+      limit,
+      Object.keys(filters).length !== 0
+        ? generateJobPostsQuery(filters)
+        : undefined
     );
     if (res.ok) {
       const { data, total, pageCount, page: currentPage, pageSize } = res;

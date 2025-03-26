@@ -10,13 +10,13 @@ export class ElasticGatewayService<T extends DocumentData> {
 
   async search(
     index: string,
-    query: Record<string, unknown>,
     page: number,
-    pageSize: number
+    pageSize: number,
+    query?: Record<string, unknown>
   ): Promise<SearchResponse<T>> {
     try {
       const from = (page - 1) * pageSize;
-      const q = {}; // TODO: build dynamic query
+
       const res = await this.es.search<T>({
         index,
         query,
@@ -28,7 +28,10 @@ export class ElasticGatewayService<T extends DocumentData> {
         id: hit._id as string,
         ...hit._source,
       })) as T[];
-      const { total } = res.hits;
+      const total =
+        typeof res.hits.total === 'number'
+          ? res.hits.total
+          : res.hits.total?.value || 0;
 
       return {
         ok: true,
@@ -36,7 +39,7 @@ export class ElasticGatewayService<T extends DocumentData> {
         page,
         pageSize,
         pageCount: Math.ceil((total as number) / pageSize),
-        total: total as number,
+        total: total,
       };
     } catch (error) {
       this.logger.error('Error finding documents:', error);
