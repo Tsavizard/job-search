@@ -2,7 +2,7 @@ services:
   mysql-job-board:
     image: mysql:8.4
     container_name: karriera-job-board-db
-    restart: always
+    restart: unless-stopped
     env_file:
       - ../envs/.env.mysql.production
     ports:
@@ -19,6 +19,7 @@ services:
   kafka-job-board:
     image: confluentinc/cp-kafka:latest
     container_name: karriera-kafka-job-board
+    restart: unless-stopped
     ports:
       - '9092:9092'
     env_file:
@@ -38,6 +39,7 @@ services:
   zookeeper-job-board:
     image: confluentinc/cp-zookeeper:latest
     container_name: karriera-zookeeper-job-board
+    restart: unless-stopped
     ports:
       - '2181:2181'
     env_file:
@@ -54,17 +56,20 @@ services:
   elasticsearch-job-search:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     container_name: elasticsearch-job-search
+    restart: unless-stopped
     ports:
       - '9200:9200'
       - '9300:9300'
     environment:
       - discovery.type=single-node
+      - xpack.security.enabled=false # TODO: remove for real prod
+      - xpack.security.http.ssl.enabled=false # TODO: remove for real prod
+      - xpack.security.transport.ssl.enabled=false # TODO: remove for real prod
 
     env_file:
       - ../envs/.env.elastic.production
     volumes:
       - elasticsearch_data-job-search-prod:/usr/share/elasticsearch/data
-    restart: unless-stopped
     healthcheck:
       test: ['CMD-SHELL', 'curl http://localhost:9200/_cluster/health']
       interval: 5s
@@ -76,7 +81,7 @@ services:
       context: ..
       dockerfile: docker/job-board.Dockerfile
     container_name: karriera-job-board-prod
-    restart: always
+    restart: unless-stopped
     environment:
       - NODE_ENV=production
     ports:
@@ -92,7 +97,7 @@ services:
       context: ..
       dockerfile: docker/job-search.Dockerfile
     container_name: karriera-job-search-prod
-    restart: always
+    restart: unless-stopped
     environment:
       - NODE_ENV=production
     ports:
