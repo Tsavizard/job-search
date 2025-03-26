@@ -12,7 +12,7 @@ export class JobPostEventsConsumer {
   constructor(
     private readonly httpService: HttpService,
     private readonly logger: Logger,
-    configService: ConfigService
+    private readonly configService: ConfigService
   ) {
     this.jobSearchBaseUrl = configService.get(
       'JOB_SEARCH_JOB_POST_RPC_URL'
@@ -26,7 +26,14 @@ export class JobPostEventsConsumer {
     if (this.isDisabled) return;
 
     try {
-      return this.httpService.post(this.jobSearchBaseUrl, jobPostDto);
+      return this.httpService.post(this.jobSearchBaseUrl, jobPostDto, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            this.configService.get('AUTH_JWT') as string
+          }`,
+        },
+      });
     } catch (error) {
       this.logger.error(
         `Failed to sync created job post: ${(error as Error).message}`
@@ -42,7 +49,15 @@ export class JobPostEventsConsumer {
     try {
       return this.httpService.put(
         `${this.jobSearchBaseUrl}/${jobPostDto.id}`,
-        jobPostDto
+        jobPostDto,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${
+              this.configService.get('AUTH_JWT') as string
+            }`,
+          },
+        }
       );
     } catch (error) {
       this.logger.error(
@@ -57,7 +72,14 @@ export class JobPostEventsConsumer {
     if (this.isDisabled) return;
 
     try {
-      return this.httpService.delete(`${this.jobSearchBaseUrl}/${id}`);
+      return this.httpService.delete(`${this.jobSearchBaseUrl}/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            this.configService.get('AUTH_JWT') as string
+          }`,
+        },
+      });
     } catch (error) {
       this.logger.error(
         `Failed to sync deleted job post: ${(error as Error).message}`
