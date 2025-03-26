@@ -47,18 +47,14 @@ export class JobPostEventsConsumer {
     if (this.isDisabled) return;
 
     try {
-      return this.httpService.put(
-        `${this.jobSearchBaseUrl}/${jobPostDto.id}`,
-        jobPostDto,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${
-              this.configService.get('AUTH_JWT') as string
-            }`,
-          },
-        }
-      );
+      return this.httpService.post(`${this.jobSearchBaseUrl}`, jobPostDto, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${
+            this.configService.get('AUTH_JWT') as string
+          }`,
+        },
+      });
     } catch (error) {
       this.logger.error(
         `Failed to sync updated job post: ${(error as Error).message}`
@@ -74,7 +70,6 @@ export class JobPostEventsConsumer {
     try {
       return this.httpService.delete(`${this.jobSearchBaseUrl}/${id}`, {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${
             this.configService.get('AUTH_JWT') as string
           }`,

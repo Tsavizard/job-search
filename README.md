@@ -11,6 +11,9 @@ Run `npm run serve-dockerized`
 
 ## Swagger
 
+encrypted token 3f2ecdea-02fe-48e1-bf7b-89ec6d028823.26dafafdd0de8ba46ebbdd02b1a67e04.7f7f9b79a8527b2b7c9a537f62258d2c4bf5583c82307b5199dd3eeabf66f7fb807b1614ed9b890d2a0130745d613f413ae7c05d5180764cc30c037789fba1e4
+for user making the requests will also make the job posts for them.
+
 - JobBoard at `http://localhost:3000/api/swagger`
 - JobSearch at `http://localhost:3001/swagger`\
   Both will need an auth token as authorization. Currently must be the userId we wish to use (uuid)
@@ -50,18 +53,41 @@ Run from root `./apps/job-search/tools/scripts/prod.sh`
 ### Notes
 
 Logging: bare minimum following tactic "no news is good news".
-  - Logger error for errors when they occur.
-  - Logger info for index creation in JobSearch.
-  - Logger info application start.
-  - Logger debug (dev only) for kafka event emission and elastic indexing success
-Sanity checks:
-  - Due to use of Kafka for event retention / retrial no extra checks were added.
-Throttling:
-  - Used example from https://docs.nestjs.com/security/rate-limiting on both applications. Ideally this shouldn't be handled in the application but by firewall / proxy.
-Environment variables:
-  - apps/job-board/envs/.env.development apps/job-search/envs/.env.development
-    - Used in development, when apps are run without container. When running the apps in container use docker-compose-dev.yml where env vars needed for network are overridden
 
-  - envs/ directory contains the env files for development/production for mysql, kafka, zookeeper, elasticsearch containers. Again mainly the hosts change from localhost to the container name but it is a good practice to have per NODE_ENV since normally the production one would be kept on server not in git
+- Logger error for errors when they occur.
+- Logger info for index creation in JobSearch.
+- Logger info application start.
+- Logger debug (dev only) for kafka event emission and elastic indexing success
+  Sanity checks:
+- Due to use of Kafka for event retention / retrial no extra checks were added.
+  Throttling:
+- Used example from https://docs.nestjs.com/security/rate-limiting on both applications. Ideally this shouldn't be handled in the application but by firewall / proxy.
+  Environment variables:
+- apps/job-board/envs/.env.development apps/job-search/envs/.env.development
+
+  - Used in development, when apps are run without container. When running the apps in container use docker-compose-dev.yml where env vars needed for network are overridden
+
+- envs/ directory contains the env files for development/production for mysql, kafka, zookeeper, elasticsearch containers. Again mainly the hosts change from localhost to the container name but it is a good practice to have per NODE_ENV since normally the production one would be kept on server not in git
 
 ## Examples
+
+Use Authorization: Bearer 3f2ecdea-02fe-48e1-bf7b-89ec6d028823.26dafafdd0de8ba46ebbdd02b1a67e04.7f7f9b79a8527b2b7c9a537f62258d2c4bf5583c82307b5199dd3eeabf66f7fb807b1614ed9b890d2a0130745d613f413ae7c05d5180764cc30c037789fba1e4
+
+Create job post in job-board
+curl -X 'POST' \
+ 'http://localhost:3000/api/job-posts' \
+ -H 'accept: application/json' \
+ -H 'Authorization: Bearer 3f2ecdea-02fe-48e1-bf7b-89ec6d028823.26dafafdd0de8ba46ebbdd02b1a67e04.7f7f9b79a8527b2b7c9a537f62258d2c4bf5583c82307b5199dd3eeabf66f7fb807b1614ed9b890d2a0130745d613f413ae7c05d5180764cc30c037789fba1e4' \
+ -H 'Content-Type: application/json' \
+ -d '{
+"title": "Sanitation manager",
+"description": "Glorified name for cleaning lady",
+"salary": 1000000,
+"workModel": "on-site"
+}'
+
+List job posts from job-search
+curl -X 'GET' \
+ 'http://localhost:3001/api/job-posts' \
+ -H 'accept: application/json' \
+ -H 'Authorization: Bearer 3f2ecdea-02fe-48e1-bf7b-89ec6d028823.26dafafdd0de8ba46ebbdd02b1a67e04.7f7f9b79a8527b2b7c9a537f62258d2c4bf5583c82307b5199dd3eeabf66f7fb807b1614ed9b890d2a0130745d613f413ae7c05d5180764cc30c037789fba1e4'
