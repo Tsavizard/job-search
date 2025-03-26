@@ -5,7 +5,10 @@ export const listSchema = z
     search: z.string(),
     salaryMax: z.coerce.number().min(0).safe().nonnegative(),
     salaryMin: z.coerce.number().min(0).safe().nonnegative(),
-    model: z.enum(['on-site', 'hybrid', 'remote']),
+    model: z.union([
+      z.enum(['on-site', 'hybrid', 'remote']),
+      z.enum(['on-site', 'hybrid', 'remote']).array(),
+    ]),
     page: z.coerce.number().min(1).safe().nonnegative(),
     limit: z.coerce.number().min(1).safe().nonnegative(),
   })

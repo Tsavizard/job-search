@@ -12,7 +12,7 @@ export type TListQuery = {
   search?: string;
   salaryMax?: number;
   salaryMin?: number;
-  model?: TWorkModel;
+  models?: TWorkModel[];
   page?: number;
   limit?: number;
 };

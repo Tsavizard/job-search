@@ -11,8 +11,8 @@ export class QueryDto {
   @ApiPropertyOptional()
   salaryMin?: number;
 
-  @ApiPropertyOptional({ enum: ['on-site', 'hybrid', 'remote'] })
-  model?: TWorkModel;
+  @ApiPropertyOptional({ enum: ['on-site', 'hybrid', 'remote'], isArray: true })
+  model?: TWorkModel[];
 
   @ApiPropertyOptional()
   page?: number;

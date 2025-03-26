@@ -8,7 +8,12 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuardJWT } from '../lib/AuthGuard.jwt';
 import { ZodValidationPipe } from '../lib/ZodValidationPipe';
-import type { JobPost, PaginatedResponse, TListQuery } from '../types';
+import type {
+  JobPost,
+  PaginatedResponse,
+  TListQuery,
+  TWorkModel,
+} from '../types';
 import { listSchema } from './job-post.schema';
 import { JobPostService } from './job-post.service';
 import { listSwagger } from './job-post.swagger';
@@ -27,12 +32,18 @@ export class JobPostApiController {
   @ApiOperation(listSwagger)
   @ApiQuery({ type: QueryDto, explode: true })
   async list(
-    @Query(queryValidationPipe) query: TListQuery
+    @Query(queryValidationPipe)
+    query: Omit<TListQuery, 'models'> & { model?: TWorkModel[] }
   ): Promise<PaginatedResponse<JobPost>> {
     const { search, salaryMax, salaryMin, model, page = 1, limit = 1 } = query;
+    let models: TWorkModel[] | undefined = undefined;
+    if (model) {
+      models = Array.isArray(model) ? model : [model];
+    }
+
     return await this.jobPostService.listJobPosts({
       limit,
-      model,
+      models,
       page,
       salaryMax,
       salaryMin,
