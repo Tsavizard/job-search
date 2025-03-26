@@ -1,11 +1,11 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Injectable()
 export class ElasticGatewayService<T extends DocumentData> {
   constructor(
     private readonly es: ElasticsearchService,
-    @Inject(Logger) private readonly logger: Logger
+    private readonly logger: Logger
   ) {}
 
   async search(
@@ -16,9 +16,12 @@ export class ElasticGatewayService<T extends DocumentData> {
   ): Promise<SearchResponse<T>> {
     try {
       const from = (page - 1) * pageSize;
+      const q = {}; // TODO: build dynamic query
       const res = await this.es.search<T>({
         index,
-        body: { query, from, size: pageSize },
+        query,
+        from,
+        size: pageSize,
       });
 
       const data = res.hits.hits.map((hit) => ({
