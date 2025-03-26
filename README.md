@@ -22,7 +22,7 @@ for user making the requests will also make the job posts for them.
 
 - Job post id and userId fields are uuid format eg `86c92e48-ad6f-4ef9-8203-3c2ef340aa2e`
 - We can generate a uuid via `npm run generate-id` script
-- Endpoints all need Bearer token authentication header (normally userId would be encrypted in the token and the server would decrypt to authenticate said token and retrieve userId)
+- Endpoints all need Bearer token authentication header
 - Scripts: `./apps/XXXXX/tools/scripts/prod.sh` remove the containers and respective volumes for cleanup
 
 ## JobBoard Demo
@@ -70,10 +70,10 @@ Logging: bare minimum following tactic "no news is good news".
 - envs/ directory contains the env files for development/production for mysql, kafka, zookeeper, elasticsearch containers. Again mainly the hosts change from localhost to the container name but it is a good practice to have per NODE_ENV since normally the production one would be kept on server not in git
 
 ## Future steps
-- Handle kafka consumer errors more gracefully. Default does exponential backoff and is vulnerable to poison pill.
-eg during testing I created via swagger a job post, then updated, then deleted. Each action has its own topic and because I had error in the update handler when I fixed it
-the topic resumed but the delete action had already happened so the update got pilled with 404.
 
+- Handle kafka consumer errors more gracefully. Default does exponential backoff and is vulnerable to poison pill.
+  eg during testing I created via swagger a job post, then updated, then deleted. Each action has its own topic and because I had error in the update handler when I fixed it
+  the topic resumed but the delete action had already happened so the update got pilled with 404.
 
 ## Examples
 
