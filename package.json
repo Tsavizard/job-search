@@ -2,7 +2,9 @@
   "name": "@karriera-test/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "generate-id": "node -e \"console.log(require('uuid').v4())\""
+  },
   "private": true,
   "dependencies": {
     "@elastic/elasticsearch": "^8.17.1",
