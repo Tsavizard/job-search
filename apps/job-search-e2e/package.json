@@ -11,8 +11,8 @@
         "executor": "nx:run-commands",
         "options": {
           "commands": [
-            "docker exec -i karriera-job-search-elastic mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-search < docker/elastic/truncate.sh",
-            "docker exec -i karriera-job-search-elastic mysql -u \"$MYSQL_USER\" -p\"$MYSQL_PASSWORD\" job-search < docker/elastic/seed.sh"
+            "docker exec -i karriera-elasticsearch-job-search /bin/bash < docker/elastic/truncate.sh",
+            "docker exec -i karriera-elasticsearch-job-search /bin/bash < docker/elastic/seed.sh"
           ],
           "envFile": "envs/.env.elastic.development",
           "parallel": false
@@ -28,7 +28,7 @@
           "passWithNoTests": true
         },
         "dependsOn": [
-          "@karriera-test/job-search:build"
+          "pre-e2e"
         ]
       }
     }

@@ -4,7 +4,7 @@ describe('Job Posts API', () => {
   let authToken: string;
 
   beforeAll(async () => {
-    '3f2ecdea-02fe-48e1-bf7b-89ec6d028823';
+    authToken = '3f2ecdea-02fe-48e1-bf7b-89ec6d028823';
   });
 
   describe('GET /api/job-posts', () => {
@@ -16,7 +16,7 @@ describe('Job Posts API', () => {
       expect(res.status).toBe(200);
       expect(Array.isArray(res.data.data)).toBe(true);
       expect(res.data.meta).toStrictEqual({
-        total: 3,
+        total: 4,
         page: 1,
         limit: 10,
         totalPages: 1,

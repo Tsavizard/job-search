@@ -12,7 +12,7 @@ describe('Job Posts API', () => {
   let authToken: string;
 
   beforeAll(async () => {
-    '3f2ecdea-02fe-48e1-bf7b-89ec6d028823';
+    authToken = '3f2ecdea-02fe-48e1-bf7b-89ec6d028823';
   });
 
   describe('POST /api/job-posts', () => {
