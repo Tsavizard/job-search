@@ -47,4 +47,15 @@ Run from root `./apps/job-search/tools/scripts/prod.sh`
 - See kafka topic offsets\
   `docker exec -it karriera-job-board-kafka kafka-consumer-groups --bootstrap-server localhost:9092 --all-groups --describe`
 
+### Notes
+
+Logging: bare minimum following tactic "no news is good news".
+  - Logger error for errors when they occur.
+  - Logger info for index creation in JobSearch.
+  - Logger info application start.
+  - Logger debug (dev only) for kafka event emission and elastic indexing success
+Sanity checks:
+  - Due to use of Kafka for event retention / retrial no extra checks were added.
+Throttling:
+  - Used example from https://docs.nestjs.com/security/rate-limiting on both applications
 ## Examples

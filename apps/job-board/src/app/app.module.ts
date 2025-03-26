@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { JobPostModule } from '../job-post/job-post.module';
 import { DatabaseModule } from '../lib/database.module';
 import { KafkaModule } from '../lib/kafka.module';
@@ -16,6 +17,14 @@ import { AppService } from './app.service';
         `${process.cwd()}/apps/job-board/envs/.env.${process.env.NODE_ENV}`,
       ],
       isGlobal: true,
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
     }),
     DatabaseModule,
     KafkaModule,
