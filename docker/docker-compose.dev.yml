@@ -80,9 +80,7 @@ services:
     environment:
       - NODE_ENV=development
       - MYSQL_HOST=mysql-job-board
-      - KAFKA_BROKER=kafka-job-board:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-job-board:2181
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-job-board:29092,PLAINTEXT_HOST://kafka-job-board:9092
+      - KAFKA_BROKER=kafka-job-board:29092
       - JOB_SEARCH_JOB_POST_RPC_URL=http://job-search:3001/rpc/job-posts
       - DISABLE_CONSUMERS=false
       - HOST=0.0.0.0
