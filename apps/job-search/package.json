@@ -69,7 +69,7 @@
         "dependsOn": [
           "build"
         ],
-        "command": "docker build -f docker/job-search.Dockerfile . -t job-search"
+        "command": "docker build -f docker/job-search.Dockerfile . -t docker-job-search"
       }
     }
   }

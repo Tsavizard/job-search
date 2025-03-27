@@ -69,7 +69,7 @@
         "dependsOn": [
           "build"
         ],
-        "command": "docker build -f docker/job-board.Dockerfile . -t job-board"
+        "command": "docker build -f docker/job-board.Dockerfile . -t docker-job-board"
       }
     }
   }
