@@ -53,7 +53,7 @@ services:
 
   elasticsearch-job-search:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    container_name: karriera-elasticsearch-job-search
+    container_name: elasticsearch-job-search
     ports:
       - '9200:9200'
       - '9300:9300'
