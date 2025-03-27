@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "generate-id": "node -e \"console.log(require('uuid').v4())\"",
-    "setup": "npx nx run-many -t build -p @karriera-test/job-board @karriera-test/job-search",
-    "serve-dockerized": "docker compose -f 'docker/docker-compose.prod.yml' up -d --build"
+    "generate-id": "node --no-warnings scripts/generate-id.ts",
+    "generate-token": "node --no-warnings scripts/generate-token.ts",
+    "setup": "scripts/setup.sh",
+    "serve-dockerized": "scripts/start-dockers-prod.sh"
   },
   "private": true,
   "dependencies": {
