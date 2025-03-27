@@ -78,7 +78,7 @@ services:
     build:
       context: ..
       dockerfile: docker/job-board.Dockerfile
-    container_name: karriera-job-board-prod
+    container_name: karriera-job-board
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -94,7 +94,7 @@ services:
     build:
       context: ..
       dockerfile: docker/job-search.Dockerfile
-    container_name: karriera-job-search-prod
+    container_name: karriera-job-search
     restart: unless-stopped
     environment:
       - NODE_ENV=production
