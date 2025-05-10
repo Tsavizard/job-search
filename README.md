@@ -1,4 +1,4 @@
-# KarrieraTest
+# Job Search app
 
 ## Setup
 
